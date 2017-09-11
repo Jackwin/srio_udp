@@ -71,6 +71,8 @@ module ethernet_srio_top (
 
 );
 
+wire                clk_udp;
+wire                reset_udp;
 wire                udpdata_tready;
 wire [63:0]         udpdata_tdata;
 wire                udpdata_tvalid;
@@ -86,6 +88,8 @@ wire [7:0]          srio_user_tkeep;
 wire                srio_user_tlast;
 wire                srio_user_tready;
 wire [15:0]         srio_user_tlen;
+
+
 
 tri_mode_ethernet_mac_0_example_design tri_mode_ethernet_mac_0_example_design_i
 (
@@ -124,6 +128,8 @@ tri_mode_ethernet_mac_0_example_design tri_mode_ethernet_mac_0_example_design_i
     .activity_flashn     (activity_flashn),
 
     // Data interface
+    .clk_udp             (clk_udp),
+    .reset_udp           (reset_udp),
     .udpdata_tready_in   (udpdata_tready),
     .udpdata_tdata_out   (udpdata_tdata),
     .udpdata_tvalid_out  (udpdata_tvalid),
@@ -143,6 +149,9 @@ srio_example_top_srio_gen2_0 srio_example_top_srio_gen2_0_i
     .srio_rxp0   (srio_rxp0),
     .srio_txn0   (srio_txn0),
     .srio_txp0   (srio_txp0),
+
+    .clk_srio   (clk_srio),
+    .reset_srio (reset_srio),
     .user_tdata_in (srio_user_tdata),
     .user_tvalid_in (srio_user_tvalid),
     .user_tfirst_in(srio_user_tfirst),
@@ -152,6 +161,33 @@ srio_example_top_srio_gen2_0 srio_example_top_srio_gen2_0_i
     .user_tready_out(srio_user_tready),
     .ack_o()
 
-    );
+);
+
+udp2srioio_interface udp2srio_interface_i
+(
+    .clk_udp         (clk_udp),
+    .reset_udp       (reset_udp),
+    .udp_data_in     (udp_data_in),
+    .udp_valid_in    (udp_valid_in),
+    .udp_first_in    (udp_first_in),
+    .udp_keep_in     (udp_keep_in),
+    .udp_last_in     (udp_last_in),
+    .udp_length_in   (udp_length_in),
+    .udp_ready_out   (udp_ready_out),
+
+    .clk_srio       (clk_srio),
+    .reset_srio     (reset_srio),
+    .srio_ready_in  (srio_ready_in),
+    .nwr_req_out     (nwr_req_out),
+    .srio_length_out(srio_length_out),
+    .srio_data_out  (srio_data_out),
+    .srio_valid_out (srio_valid_out),
+    .srio_first_out (srio_first_out),
+    .srio_keep_out  (srio_keep_out),
+    .srio_last_out  (srio_last_out)
+);
+
+
+
 
 endmodule

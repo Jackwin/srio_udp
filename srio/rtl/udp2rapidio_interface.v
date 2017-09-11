@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-module udp2rapidio_interface #
+module udp2srio_interface #
     (
     parameter DATA_WIDTH = 64,
     parameter DATA_LEN_WIDTH = 20,
@@ -17,21 +17,22 @@ module udp2rapidio_interface #
     input [15:0]            udp_length_in,
     output                  udp_ready_out,
 
-    input                   clk_rapid,
-    input                   reset_rapid,
+    input                   clk_srio,
+    input                   reset_srio,
 
+    input                   srio_ready_in,
     output                  nwr_req_out,
-    output  [15:0]          rapid_length_out,
-    output [DATA_WIDTH-1:0] rapid_data_out,
-    output                  rapid_valid_out,
-    output                  rapid_first_out,
-    output [DATA_WIDTH/8-1:0] rapid_keep_out,
-    output                  rapid_last_out
+    output  [15:0]          srio_length_out,
+    output [DATA_WIDTH-1:0] srio_data_out,
+    output                  srio_valid_out,
+    output                  srio_first_out,
+    output [DATA_WIDTH/8-1:0] srio_keep_out,
+    output                  srio_last_out
 
 );
 
 wire                    fifo_wr_clk = clk_udp;
-wire                    fifo_rd_clk = clk_rapid;
+wire                    fifo_rd_clk = clk_srio;
 wire                    fifo_reset = reset_udp;
 
 wire [64+8+1+1+1-1:0]     fifo_din, fifo_dout;
@@ -59,15 +60,15 @@ assign fifo_din = {data_2words, data_keep, data_last, data_valid, first_buf};
 assign udp_ready_out = ~fifo_full;
 
 assign fifo_wr_ena = data_valid;
-assign fifo_rd_ena = (rapid_ready_in && ~fifo_empty);
-assign rapid_data_out = fifo_dout[74:11];
-assign rapid_valid_out = fifo_dout_valid;
-assign {rapid_keep_out, rapid_last_out, rapid_first_out} = fifo_dout_valid ? fifo_dout[10:1] : 'h0;
-//assign {rapid_keep_out, rapid_last_out, rapid_valid_out, rapid_first_out} = fifo_dout_valid ? fifo_dout[10:0]
-//                                        : {rapid_keep_out, rapid_last_out, rapid_valid_out,rapid_first_out};
-assign nwr_req_out = rapid_first_out;
-always @(posedge clk_rapid) begin
-    if (reset_rapid) begin
+assign fifo_rd_ena = (srio_ready_in && ~fifo_empty);
+assign srio_data_out = fifo_dout[74:11];
+assign srio_valid_out = fifo_dout_valid;
+assign {srio_keep_out, srio_last_out, srio_first_out} = fifo_dout_valid ? fifo_dout[10:1] : 'h0;
+//assign {srio_keep_out, srio_last_out, srio_valid_out, srio_first_out} = fifo_dout_valid ? fifo_dout[10:0]
+//                                        : {srio_keep_out, srio_last_out, srio_valid_out,srio_first_out};
+assign nwr_req_out = srio_first_out;
+always @(posedge clk_srio) begin
+    if (reset_srio) begin
         {length_buf1, length_buf0} <= 'h0;
     end
     else begin
@@ -75,7 +76,7 @@ always @(posedge clk_rapid) begin
         length_buf1 <= length_buf0;
     end
 end
-assign rapid_length_out = length_buf1;
+assign srio_length_out = length_buf1;
 
 always @(posedge clk_udp) begin
     if (reset_udp) begin

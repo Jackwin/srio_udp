@@ -181,6 +181,8 @@ module tri_mode_ethernet_mac_0_example_design
      output          activity_flashn,
 
      // Data Interface
+     output             clk_udp,
+     output             reset_udp,
      input            udpdata_tready_in,
      output [31:0] udpdata_tdata_out,
      output          udpdata_tvalid_out,
@@ -709,7 +711,7 @@ assign     s_axi_aclk = userclk;
   //----------------------------------------------------------------------------
   //  Instantiate the address swapping module and simple pattern generator
   //----------------------------------------------------------------------------
-  `ifdef `UDP
+  `ifndef UDP
     tri_mode_ethernet_mac_0_basic_pat_gen basic_pat_gen_inst (
     .axi_tclk                            (tx_fifo_clock),
     .axi_tresetn                        (tx_fifo_resetn),
@@ -742,6 +744,8 @@ assign     s_axi_aclk = userclk;
      wire arp_reply_ack;
      wire [31:0] remote_ip_addr_out;
      wire [47:0] remote_mac_addr_out;
+     assign clk_udp = clk_32;
+     assign reset_udp = reset_32;
     ip_packet_gen ip_packet_gen_module (
 
      .local_IP_in         (`MY_IP_ADDR),
@@ -767,8 +771,6 @@ assign     s_axi_aclk = userclk;
      .axis_tlast_out(tx_axis_fifo_tlast),
      .axis_tready_in(tx_axis_fifo_tready)
   );
-
-
 
 recv_top recv_top_i
 (

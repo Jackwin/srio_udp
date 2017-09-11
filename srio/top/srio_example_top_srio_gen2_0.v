@@ -87,6 +87,8 @@ module srio_example_top_srio_gen2_0 #(
 
     // Data Interface
 
+    output              clk_rapid,
+    output              reset_rapid,
     input               self_check_in,
     ouput               rapidIO_ready_out,
 
@@ -333,18 +335,6 @@ wire                      gt_rxdfelpmreset_in  ;
     wire            reset_all_registers;
     (* mark_debug = "true" *)
     wire  [3:0]     stats_address;
-    //(* mark_debug = "true" *)
-    // wire            send_pna;
-    // (* mark_debug = "true" *)
-    // wire  [2:0]     sent_pna_cause_lsb;
-    // (* mark_debug = "true" *)
-    // wire            in_recoverable_detect;
-    // (* mark_debug = "true" *)
-    // wire            in_retry_detect;
-    // (* mark_debug = "true" *)
-    // wire            out_recoverable_detect;
-    // (* mark_debug = "true" *)
-    // wire            out_fatal_detect;
 
     wire       core_sent_pna;
 
@@ -582,10 +572,13 @@ wire                      gt_rxdfelpmreset_in  ;
 
     generate if (!VALIDATION_FEATURES && !MIRROR) begin: db_req_gen
 
+    assign clk_rapid = log_clk;
+    assign reset_rapid = rapid_reset;
+
     input_reader input_reader_i
     (
-        .clk             (clk),
-        .reset           (reset),
+        .clk             (log_clk),
+        .reset           (log_reset),
 
         .data_in         (user_tdata_in),
         .data_valid_in   (user_tvalid_in),
@@ -836,13 +829,6 @@ endgenerate
       .phy_lcl_phy_rewind_out        (),
       .phy_lcl_phy_rcvd_buf_stat_out (),
       .phy_lcl_maint_only_out        (),
-//---
-
-
-
-
-
-//---
       .port_initialized              (port_initialized  ),
       .link_initialized              (link_initialized  ),
       .idle_selected                 (idle_selected     ),

@@ -1,3 +1,4 @@
+
 `timescale 1ns/1ps
 
 module srio_udp_tb ();
@@ -47,6 +48,39 @@ wire            srio_valid_out;
 wire            srio_first_out;
 wire [7:0]      srio_keep_out;
 wire            srio_last_out;
+
+wire            user_tready;
+wire [63:0]     user_tdata;
+wire            user_tvalid;
+wire            user_tfirst;
+wire [15:0]     user_tsize;
+wire [7:0]      user_tkeep;
+wire            user_tlast;
+
+logic [15:0]    src_id = 16'h01;
+logic [15:0]    des_id = 16'hf0;
+logic [33:0]    user_addr = 34'h3ff00ff00;
+
+logic           dr_req_in;
+logic           nwr_req_in;
+logic           rapidIO_ready;
+logic           link_initialized = 1;
+logic           nwr_ready_o;
+logic           nwr_busy_o;
+
+wire            axis_iotx_tvalid;
+wire            axis_iotx_tready = 1'b1;
+wire            axis_iotx_tlast;
+wire   [63:0]   axis_iotx_tdata;
+wire   [7:0]    axis_iotx_tkeep;
+wire   [31:0]   axis_iotx_tuser;
+
+wire            axis_iorx_tvalid;
+wire            axis_iorx_tready;
+wire            axis_iorx_tlast;
+wire    [63:0]  axis_iorx_tdata;
+wire    [7:0]   axis_iorx_tkeep;
+wire    [31:0]  axis_iorx_tuser;
 
 initial begin
     clk_32 = 1'b0;
@@ -191,7 +225,7 @@ udp2srio_interface udp2srio_interface_i
 
     .clk_srio      (clk_srio),
     .reset_srio    (reset_srio),
-    .nwr_req_out     (nwr_req_out),
+    .nwr_req_out     (nwr_req_in),
     .srio_ready_in  (srio_ready_in),
     .srio_length_out(srio_length_out),
     .srio_data_out (srio_data_out),
@@ -225,7 +259,51 @@ input_reader input_reader_i
     .output_tfirst   (user_tfirst),
     .output_done     ()
 
+);
+
+db_req
+#(.SIM(1))
+db_req_i
+
+    (
+    .log_clk(clk_srio),
+    .log_rst(reset_srio),
+
+    .src_id(src_id),
+    .des_id(des_id),
+
+    .self_check_in(self_check_in),
+    .rapidIO_ready_o(rapidIO_ready_out),
+    .link_initialized(link_initialized),
+
+    .nwr_req_in(nwr_req_in),
+    .nwr_ready_o(nwr_ready_out),
+    .nwr_busy_o(nwr_busy_out),
+    .nwr_done_ack_o(nwr_done_out),
+
+    .user_tready_o(user_tready),
+    .user_addr(user_addr),
+    .user_tsize_in(user_tsize[7:0]),
+    .user_tdata_in(user_tdata),
+    .user_tvalid_in(user_tvalid),
+    .user_tkeep_in(user_tkeep),
+    .user_tlast_in(user_tlast),
+
+    .ireq_tvalid_o(axis_iotx_tvalid),
+    .ireq_tready_in(axis_iotx_tready),
+    .ireq_tlast_o(axis_iotx_tlast),
+    .ireq_tdata_o(axis_iotx_tdata),
+    .ireq_tkeep_o(axis_iotx_tkeep),
+    .ireq_tuser_o(axis_iotx_tuser),
+
+    .iresp_tvalid_in(axis_iorx_tvalid),
+    .iresp_tready_o(axis_iorx_tready),
+    .iresp_tlast_in(axis_iorx_tlast),
+    .iresp_tdata_in(axis_iorx_tdata),
+    .iresp_tkeep_in(axis_iorx_tkeep),
+    .iresp_tuser_in(axis_iorx_tuser)
     );
+
 
 
 endmodule

@@ -135,7 +135,7 @@ end
 assign udp_tvalid_ila[0] = udpdata_tvalid_out;
 assign udp_tlast_ila[0] = udpdata_tlast_out;
 assign udp_tready_ila[0] = udpdata_tready_in;
-ila_1 ila_udp (
+ila_udp ila_udp_i (
         .clk(clk), // input wire clk
         .probe0(udpdata_tdata_out), // input wire [7:0]  probe0
         .probe1(udp_tvalid_ila), // input wire [0:0]  probe1

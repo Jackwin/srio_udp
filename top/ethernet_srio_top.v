@@ -163,7 +163,7 @@ srio_example_top_srio_gen2_0 srio_example_top_srio_gen2_0_i
 
 );
 
-udp2srioio_interface udp2srio_interface_i
+udp2srio_interface udp2srio_interface_i
 (
     .clk_udp         (clk_udp),
     .reset_udp       (reset_udp),

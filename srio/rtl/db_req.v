@@ -370,19 +370,22 @@ always @(posedge log_clk) begin
                 if (ireq_tready_in) begin
                     if (current_user_valid && current_user_first) begin
                         ireq_tdata_o <= {nwr_srcID, NWR, TNWR,1'b0, 2'h1, 1'b0, current_user_data[7:0] , 2'h0, target_ed_addr};
+                        ireq_tkeep_o <= 'hff;
 						 $display($time, " Source->Target: Now sending NWR packet with the length being %d and target ID being %x", current_user_size+1,target_ed_addr);
                     end
                     else if ((current_user_valid && ~current_user_first)) begin
                         ireq_tdata_o <= current_user_data;
+                        ireq_tkeep_o <= current_user_keep;
                     end
                     else begin
                         ireq_tdata_o <= ireq_tdata_o;
+                        ireq_tkeep_o <= ireq_tkeep_o;
                     end
                 end
                 else begin
                     ireq_tdata_o <= ireq_tdata_o;
                 end
-                ireq_tkeep_o <= current_user_keep;
+                //ireq_tkeep_o <= current_user_keep;
                 ireq_tvalid_o <= current_user_valid && fifo_dout_valid;
                 ireq_tlast_o <= current_user_last && fifo_dout_valid;
                 //ireq_tvalid_o = current_user_valid && ireq_tready_in;

@@ -63,15 +63,18 @@ assign fifo_wr_ena = data_valid;
 assign fifo_rd_ena = (srio_ready_in && ~fifo_empty);
 assign srio_data_out = fifo_dout[74:11];
 assign srio_valid_out = fifo_dout_valid;
-assign {srio_keep_out, srio_last_out, srio_first_out} = fifo_dout_valid ? fifo_dout[10:1] : 'h0;
+assign {srio_keep_out, srio_last_out} = fifo_dout_valid ? fifo_dout[10:2] : 'h0;
 //assign {srio_keep_out, srio_last_out, srio_valid_out, srio_first_out} = fifo_dout_valid ? fifo_dout[10:0]
 //                                        : {srio_keep_out, srio_last_out, srio_valid_out,srio_first_out};
+assign srio_first_out = fifo_dout[0];
 assign nwr_req_out = srio_first_out;
 always @(posedge clk_srio) begin
     if (reset_srio) begin
         {length_buf1, length_buf0} <= 'h0;
+        fifo_dout_valid <= 1'b0;
     end
     else begin
+        fifo_dout_valid <= fifo_rd_ena;
         length_buf0 <= udp_length_in;
         length_buf1 <= length_buf0;
     end
@@ -82,11 +85,9 @@ always @(posedge clk_udp) begin
     if (reset_udp) begin
         data_buf <= 'h0;
         keep_buf <= 'h0;
-        fifo_dout_valid <= 1'b0;
         first_buf <= 1'b0;
     end
     else begin
-        fifo_dout_valid <= fifo_rd_ena;
         if (udp_valid_in) begin
             data_buf <= udp_data_in;
             keep_buf <= udp_keep_in;

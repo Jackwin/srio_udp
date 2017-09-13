@@ -75,7 +75,7 @@ recv_buffer recv_buffer_module
 (
     .clk (clk_8),
     .reset (reset_8),
-    .mac_addr (local_mac_addr),
+    .local_mac_addr_in (local_mac_addr),
     .axis_tdata_in (axis_tdata_in),
     .axis_tvalid_in (axis_tvalid_in),
     .axis_tlast_in (axis_tlast_in),

@@ -80,7 +80,8 @@ always @(posedge clk) begin
 end
 assign data_4bytes = {data_buf[2], data_buf[1], data_buf[0], udp_axis_tdata_in};
 assign data_2bytes = {data_buf[0], udp_axis_tdata_in};
-assign udp_length_out = udp_length;
+// For SRIO, the data length is the actual length minuses 1 byte.
+assign udp_length_out = udp_length - 1'd1;
 
 axis_8to32 axis8to32_i (
     .clk_8(clk),

@@ -23,7 +23,7 @@ module recv_buffer
 (
     input           clk,
     input           reset,
-    input [47:0]    mac_addr,
+    input [47:0]    local_mac_addr_in,
 
     //input port
     input [7:0]     axis_tdata_in,
@@ -141,7 +141,7 @@ always @(posedge clk) begin
                 byte_cnt <= 'h0;
                 ip_axis_tlast_out <= 1'b0;
                 arp_axis_tlast_out <= 1'b0;
-                if ((data_6bytes == mac_addr || data_6bytes == 48'hffffffffffff) && axis_tvalid_in) begin
+                if ((data_6bytes == local_mac_addr_in || data_6bytes == 48'hffffffffffff) && axis_tvalid_in) begin
                     state <= MAC_s;
                 end
                 else begin

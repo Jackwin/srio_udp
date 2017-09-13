@@ -125,7 +125,7 @@
 `timescale 1 ps/1 ps
 `define UDP
 `define MY_IP_ADDR              32'h60a80006 // 192.168.0.6
-`define MY_MAC_ADDR              48'h0dd0504030201
+`define MY_MAC_ADDR              48'hdd0504030201
 //------------------------------------------------------------------------------
 // The module declaration for the example_design level wrapper.
 //------------------------------------------------------------------------------

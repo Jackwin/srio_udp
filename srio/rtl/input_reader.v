@@ -397,13 +397,13 @@ assign output_done = rd_pack_tlast && rd_data_tlast && rd_data_valid_reg;
 
 
 task transLengthComp;
-    input [19:0] data_length_in; // in the size of byte, the number of bytes in the transfer minus one
-    output [11:0] trans_256B_times; // times of 256B transaction
+    input [15:0] data_length_in; // in the size of byte, the number of bytes in the transfer minus one
+    output [7:0] trans_256B_times; // times of 256B transaction
     output [3:0] pad_length; // the data added to round up to the closest boundary
     output [7:0] rounded_length;  // the closest supported value
     output [7:0] tail_length;
     begin
-        trans_256B_times = data_length_in[19:8];
+        trans_256B_times = data_length_in[15:8];
         // not a whole 256-byte packet
         tail_length = data_length_in[7:0];
         casex(data_length_in[7:0])

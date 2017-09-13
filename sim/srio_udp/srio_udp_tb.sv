@@ -14,7 +14,8 @@ reg [15:0]      dest_port = 32'd1024;
 reg [31:0]      remote_ip_addr = 32'hddccbbaa;
 reg [47:0]      remote_mac_addr = 48'hdd0504030201;
 
-wire [31:0]     local_ip_addr = 32'hddccbbaa;
+wire [31:0]     local_ip_addr = 32'h60a80006;
+wire [47:0]     local_mac_addr = 48'hdd0504030201;
 reg             arp_reply;
 
 reg             aclk;
@@ -154,7 +155,8 @@ end
 */
 ip_packet_gen ip_packet_gen_module
 (
-
+    .local_IP_in       (local_IP),
+    .local_MAC_in      (local_MAC),
     // IP signals
     .clk_32(clk_32),
     .reset_32(reset_32),
@@ -184,7 +186,7 @@ recv_top recv_top_i
 (
     .clk_8(clk_8),
     .reset_8        (areset),
-    .local_mac_addr     (remote_mac_addr),
+    .local_mac_addr     (local_mac_addr),
     .local_ip_addr      (local_ip_addr),
 
     .axis_tdata_in(tdata),
@@ -247,7 +249,7 @@ input_reader input_reader_i
     .data_keep_in    (srio_keep_out),
     .data_len_in     (srio_length_out),
     .data_last_in    (srio_last_out),
-    .data_ready_out  (user_tready_out),
+    .data_ready_out  (srio_ready_in),
     .ack_o           (ack_o),
 
     .output_tready_in(user_tready),
@@ -286,6 +288,7 @@ db_req_i
     .user_tsize_in(user_tsize[7:0]),
     .user_tdata_in(user_tdata),
     .user_tvalid_in(user_tvalid),
+    .user_tfirst_in(user_tfirst),
     .user_tkeep_in(user_tkeep),
     .user_tlast_in(user_tlast),
 

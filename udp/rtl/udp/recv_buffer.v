@@ -36,8 +36,6 @@ module recv_buffer
     output reg [7:0] arp_axis_tdata_out,
     output reg      arp_axis_tvalid_out,
     output reg      arp_axis_tlast_out,
-    // ARP request from remote
-    output reg      arp_request_out,
 
     input           ip_axis_tready_in,
     output reg [7:0] ip_axis_tdata_out,
@@ -117,7 +115,6 @@ always @(posedge clk) begin
          arp_axis_tdata_out <= 32'h0;
          arp_axis_tvalid_out <= 1'b0;
          arp_axis_tlast_out <= 1'b0;
-         arp_request_out <= 1'b0;
          state <= IDLE_s;
          ip_length <= 'h0;
          byte_cnt <= 'h0;

@@ -105,6 +105,7 @@ module srio_example_top_srio_gen2_0 #(
     output              nwr_busy_out,
     output              nwr_done_out,
 
+    input [33:0]        user_taddr_in,
     input [63:0]        user_tdata_in,
     input               user_tvalid_in,
     input               user_tfirst_in,
@@ -377,9 +378,6 @@ wire                      gt_rxdfelpmreset_in  ;
   wire [15:0] des_id = 16'hf0;
 
   wire              rapidIO_ready;
-  wire              nwr_ready;
-  wire              nwr_busy;
-  wire              nwr_done;
   reg [2:0]         nwr_done_r;
   // Count the times of NWR operation
   reg [3:0]         nwr_cnt;
@@ -390,9 +388,8 @@ wire                      gt_rxdfelpmreset_in  ;
 
 
   wire              user_ready;
-  wire [33:0]       user_taddr;
   wire              user_tready;
-  wire [11:0]       user_tsize;
+  wire [7:0]       user_tsize;
 
   wire [63:0]       user_tdata;
   wire              user_tvalid;
@@ -485,9 +482,9 @@ assign srio_led[1] = ~link_initialized;
   assign link_initialized_vio[0] = link_initialized;
   assign clk_lock_vio[0] = clk_lock;
 
-  assign nwr_ready_ila[0] = nwr_ready;
-  assign nwr_busy_ila[0] = nwr_busy;
-  assign nwr_done_ila[0] = nwr_done;
+  assign nwr_ready_ila[0] = nwr_ready_out;
+  assign nwr_busy_ila[0] = nwr_busy_out;
+  assign nwr_done_ila[0] = nwr_done_out;
   assign link_initialized_ila[0] = link_initialized;
   assign user_tready_ila[0] = user_tready;
   assign iotx_tvalid_ila[0] = iotx_tvalid;
@@ -575,19 +572,19 @@ assign srio_led[1] = ~link_initialized;
     generate if (!VALIDATION_FEATURES && !MIRROR) begin: db_req_gen
 
     assign clk_srio = log_clk;
-    assign reset_srio = log_reset;
+    assign reset_srio = log_rst;
 
     input_reader input_reader_i
     (
         .clk             (log_clk),
-        .reset           (log_reset),
+        .reset           (log_rst),
 
         .data_in         (user_tdata_in),
         .data_valid_in   (user_tvalid_in),
         .data_first_in   (user_tfirst_in),
         .data_keep_in    (user_tkeep_in),
         .data_len_in     (user_tlen_in),
-        .data_last_in    (user_ltast_in),
+        .data_last_in    (user_tlast_in),
         .data_ready_out  (user_tready_out),
         .ack_o           (ack_o),
 
@@ -614,21 +611,26 @@ assign srio_led[1] = ~link_initialized;
         .des_id(des_id),
 
         .self_check_in(self_check_in),
+        .nwr_req_in(nwr_req_in),
         .rapidIO_ready_o(rapidIO_ready_out),
         .link_initialized(link_initialized),
 
-        .nwr_req_in(nwr_req_in),
         .nwr_ready_o(nwr_ready_out),
         .nwr_busy_o(nwr_busy_out),
         .nwr_done_ack_o(nwr_done_out),
 
         .user_tready_o(user_tready),
-        .user_addr(user_taddr),
+        .user_addr(user_taddr_in),
         .user_tsize_in(user_tsize),
         .user_tdata_in(user_tdata),
         .user_tvalid_in(user_tvalid),
+        .user_tfirst_in(user_tfirst),
         .user_tkeep_in(user_tkeep),
         .user_tlast_in(user_tlast),
+
+        .error_out(),
+        .error_type_o(),
+        .error_target_id(),
 
         .ireq_tvalid_o(iotx_tvalid),
         .ireq_tready_in(iotx_tready),

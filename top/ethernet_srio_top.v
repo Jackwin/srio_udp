@@ -44,7 +44,7 @@ module ethernet_srio_top (
     input           gen_tx_data,
     input           chk_tx_data,
     input           reset_error,
-   
+
 
     //SRIO interface
     // Clocks and Resets
@@ -79,9 +79,9 @@ module ethernet_srio_top (
 wire                clk_udp;
 wire                reset_udp;
 wire                udpdata_tready;
-wire [63:0]         udpdata_tdata;
+wire [31:0]         udpdata_tdata;
 wire                udpdata_tvalid;
-wire [7:0]          udpdata_tkeep;
+wire [3:0]          udpdata_tkeep;
 wire                udpdata_tlast;
 wire                udpdata_tfirst;
 wire [15:0]         udpdata_length;
@@ -94,6 +94,11 @@ wire                srio_user_tlast;
 wire                srio_user_tready;
 wire [15:0]         srio_user_tlen;
 
+wire                nwr_req_out;
+wire                self_check_in;
+wire                nwr_ready_out;
+wire                nwr_busy_out;
+wire                nwr_done_out;
 
 
 tri_mode_ethernet_mac_0_example_design tri_mode_ethernet_mac_0_example_design_i
@@ -127,10 +132,7 @@ tri_mode_ethernet_mac_0_example_design tri_mode_ethernet_mac_0_example_design_i
     .gen_tx_data         (gen_tx_data),
     .chk_tx_data         (chk_tx_data),
     .reset_error         (reset_error),
-    .frame_error         (),
-    .frame_errorn        (),
-    .activity_flash      (),
-    .activity_flashn     (),
+
 
     // Data interface
     .clk_udp             (clk_udp),
@@ -172,6 +174,15 @@ srio_example_top_srio_gen2_0 srio_example_top_srio_gen2_0_i
 
     .clk_srio           (clk_srio),
     .reset_srio         (reset_srio),
+    .self_check_in      (),
+    .rapidIO_ready_out  (),
+    .nwr_req_in         (nwr_req_out),
+    .nwr_ready_out      (),
+    .nwr_busy_out       (),
+    .nwr_done_out       (),
+
+    //TODO how to get the addr
+    .user_taddr_in      ('h0),
     .user_tdata_in      (srio_user_tdata),
     .user_tvalid_in     (srio_user_tvalid),
     .user_tfirst_in     (srio_user_tfirst),
@@ -187,24 +198,24 @@ udp2srio_interface udp2srio_interface_i
 (
     .clk_udp         (clk_udp),
     .reset_udp       (reset_udp),
-    .udp_data_in     (udp_data_in),
-    .udp_valid_in    (udp_valid_in),
-    .udp_first_in    (udp_first_in),
-    .udp_keep_in     (udp_keep_in),
-    .udp_last_in     (udp_last_in),
-    .udp_length_in   (udp_length_in),
-    .udp_ready_out   (udp_ready_out),
+    .udp_data_in     (udpdata_tdata),
+    .udp_valid_in    (udpdata_tvalid),
+    .udp_first_in    (udpdata_tfirst),
+    .udp_keep_in     (udpdata_tkeep),
+    .udp_last_in     (udpdata_tlast),
+    .udp_length_in   (udpdata_length),
+    .udp_ready_out   (udpdata_tready),
 
     .clk_srio       (clk_srio),
     .reset_srio     (reset_srio),
-    .srio_ready_in  (srio_ready_in),
+    .srio_ready_in  (srio_user_tready),
     .nwr_req_out     (nwr_req_out),
-    .srio_length_out(srio_length_out),
-    .srio_data_out  (srio_data_out),
-    .srio_valid_out (srio_valid_out),
-    .srio_first_out (srio_first_out),
-    .srio_keep_out  (srio_keep_out),
-    .srio_last_out  (srio_last_out)
+    .srio_length_out(srio_user_tlen),
+    .srio_data_out  (srio_user_tdata),
+    .srio_valid_out (srio_user_tvalid),
+    .srio_first_out (srio_user_tfirst),
+    .srio_keep_out  (srio_user_tkeep),
+    .srio_last_out  (srio_user_tlast)
 );
 
 

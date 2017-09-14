@@ -175,10 +175,6 @@ module tri_mode_ethernet_mac_0_example_design
      input            gen_tx_data,
      input            chk_tx_data,
      input            reset_error,
-     output          frame_error,
-     output          frame_errorn,
-     output          activity_flash,
-     output          activity_flashn,
 
      // Data Interface
      output             clk_udp,
@@ -319,8 +315,7 @@ module tri_mode_ethernet_mac_0_example_design
     // signal tie offs
     wire  [7:0]             tx_ifg_delay = 0;     // not used in this example
 
-    assign frame_errorn = !frame_error;
-    assign activity_flashn = !activity_flash;
+
 
     wire                      mdio_i;
     wire                      mdio_o;
@@ -733,8 +728,8 @@ assign     s_axi_aclk = userclk;
     .tx_axis_tlast                     (tx_axis_fifo_tlast),
     .tx_axis_tready                    (tx_axis_fifo_tready),
 
-    .frame_error                        (frame_error),
-    .activity_flash                    (activity_flash)
+    .frame_error                        (),
+    .activity_flash                    ()
     );
   //-----------------------------------------------------------------------------
   // Generate UDP package
@@ -750,6 +745,12 @@ assign     s_axi_aclk = userclk;
 
      .local_IP_in         (`MY_IP_ADDR),
      .local_MAC_in        (`MY_MAC_ADDR),
+
+          //ARP Get the remote ip and mac
+     .remote_ip_addr_in (remote_ip_addr_out),
+     .remote_mac_addr_in(remote_mac_addr_out),
+     .arp_reply_in(arp_reply_out),
+     .arp_reply_ack_out (arp_reply_ack),
      // IP signals
      .clk_32(clk_32),
      .reset_32 (reset_32),
@@ -757,12 +758,6 @@ assign     s_axi_aclk = userclk;
      .tcp_ctrl_type('h0),
      .dest_ip_addr(dest_ip_addr),
      .dest_port(dest_port),
-
-     //ARP Get the remote ip and mac
-     .remote_ip_addr_in (remote_ip_addr_out),
-     .remote_mac_addr_in(remote_mac_addr_out),
-     .arp_reply_in(arp_reply_out),
-     .arp_reply_ack_out (arp_reply_ack),
 
      .clk_8(tx_fifo_clock),
      .reset_8(~tx_fifo_resetn),
@@ -913,7 +908,7 @@ assign rx_axis_fifo_tlast_ila[0] = rx_axis_fifo_tlast;
 assign rx_axis_fifo_tready_ila[0] = rx_axis_fifo_tready;
 assign tx_data_gen = tx_data_gen_vio[0];
 
-ila_0 tx_ila (
+ila_tx tx_ila (
      .clk(tx_fifo_clock),
      .probe0(mmcm_locked_ila),
      .probe1(gtx_resetdone_ila),
@@ -924,14 +919,14 @@ ila_0 tx_ila (
   .probe6(tx_axis_fifo_tvalid),
   .probe7(tx_axis_fifo_tlast)
      );
-ila_1 ila_rx (
+ila_rx ila_rx_i (
           .clk(tx_fifo_clock), // input wire clk
           .probe0(rx_axis_fifo_tdata), // input wire [7:0]  probe0
           .probe1(rx_axis_fifo_tvalid_ila), // input wire [0:0]  probe1
           .probe2(rx_axis_fifo_tlast_ila), // input wire [0:0]  probe2
           .probe3(rx_axis_fifo_tready_ila) // input wire [0:0]  probe3
      );
-vio_0 tx_gen_vio (
+vio_tx_gen vio_tx_gen_i (
   .clk(tx_fifo_clock),                     // input wire clk
   .probe_out0(tx_data_gen_vio)  // output wire [0 : 0] probe_out0
 );

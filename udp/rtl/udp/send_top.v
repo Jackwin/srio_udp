@@ -104,6 +104,7 @@ udp_send udp_send_module
 
    .ip_addr_in(dest_ip_addr),
    .dest_port(dest_port),
+   .ip_addr_out   (),
 
    .length_in(data_from_app_length),
    .data_ready_in(udp_data_ready),
@@ -138,8 +139,8 @@ ip_send ip_send_module
   (
    .clk(clk),
    .reset(reset),
-
    .ip_addr(dest_ip_addr),
+
    // from UDP send
    .udp_data_in(udp_data_to_ip),
    .udp_valid_in(udp_data_valid),
@@ -158,6 +159,9 @@ ip_send ip_send_module
    // send buffer
    .ready_in(ip_send_ready),
    // output ports
+   .conflict_flag_out (),
+   .data_length_out   (),
+   .length_valid_out  (),
    .oip_addr(ip_send_ip_addr),
    .axis_tdata_out(send_ip_data),
    .axis_tvalid_out(send_ip_valid),
@@ -185,9 +189,9 @@ arp_send arp_send_module
     .arp_tvalid_out (arp_send_valid),
     .arp_tkeep_out (arp_send_keep),
     .arp_tlast_out (arp_send_last),
-    //.reply_ready(reply_ready),
-    .request_ready_out(request_ready)
-   //.arp_mac_addr(arp_mac_addr)
+    .reply_ready_out(),
+    .request_ready_out(request_ready),
+    .arp_mac_addr_out()
    );
 
 send_buffer send_buffer_module

@@ -43,18 +43,13 @@ module ip_packet_gen
    input wire [31:0]    dest_ip_addr,
    input wire [15:0]    dest_port,
 
-   input wire           aclk,
-   input wire           areset,
-   input wire           insert_error,
-   input wire           enable_pat_gen,
-
    input wire           clk_8,
    input wire           reset_8,
    output wire [7:0]    axis_tdata_out,
    output wire          axis_tvalid_out,
    output wire          axis_tlast_out,
-   input wire           axis_tready_in,
-   output reg           gen_active_flash
+   input wire           axis_tready_in
+
 );
 
 wire [31:0]          udp_data;

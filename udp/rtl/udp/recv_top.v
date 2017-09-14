@@ -104,7 +104,8 @@ udp_rcv udp_rcv_module
     .udpdata_tready_in  (udpdata_tready),
     .udpdata_tdata_out  (udpdata_tdata),
     .udpdata_tvalid_out (udpdata_tvalid),
-    .udpdata_tlast_out  (udpdata_tlast)
+    .udpdata_tlast_out  (udpdata_tlast),
+    .dest_port_out      ()
 );
 
 arp_recv arp_recv_module

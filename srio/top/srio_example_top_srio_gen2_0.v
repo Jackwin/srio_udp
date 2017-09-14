@@ -48,7 +48,7 @@
 `timescale 1ps/1ps
 (* DowngradeIPIdentifiedWarnings = "yes" *)
 
-`define SIM
+//`define SIM
 module srio_example_top_srio_gen2_0 #(
     parameter MIRROR                    = 0,
     `ifdef SIM
@@ -73,24 +73,31 @@ module srio_example_top_srio_gen2_0 #(
     // high-speed IO
     input           srio_rxn0,              // Serial Receive Data
     input           srio_rxp0,              // Serial Receive Data
+    input           srio_rxn1,              // Serial Receive Data
+    input           srio_rxp1,              // Serial Receive Data
+    input            srio_rxn2,              // Serial Receive Data
+    input           srio_rxp2,              // Serial Receive Data
+    input           srio_rxn3,              // Serial Receive Data
+    input           srio_rxp3,              // Serial Receive Data
+
 
     output          srio_txn0,              // Serial Transmit Data
     output          srio_txp0,              // Serial Transmit Data
+    output          srio_txn1,              // Serial Transmit Data
+    output          srio_txp1,              // Serial Transmit Data
 
-
-//input           sim_train_en,           // Set this only when simulating to reduce the size of counters
-       `ifdef SIM
-    output [3:0] led0,
-    `else
-    output  [1:0]   led0,
-    `endif
+    output          srio_txn2,              // Serial Transmit Data
+    output          srio_txp2,              // Serial Transmit Data
+    output          srio_txn3,              // Serial Transmit Data
+    output          srio_txp3,              // Serial Transmit Data
+    output  [1:0]   srio_led,
 
     // Data Interface
 
-    output              clk_rapid,
-    output              reset_rapid,
+    output              clk_srio,
+    output              reset_srio,
     input               self_check_in,
-    ouput               rapidIO_ready_out,
+    output               rapidIO_ready_out,
 
     // NWR interface
     input               nwr_req_in,
@@ -419,15 +426,10 @@ wire                      gt_rxdfelpmreset_in  ;
 
   wire              sim_train_en = 1'b0;
   assign sys_rst = ~sys_rst_n;
-  `ifdef SIM
-    assign led0[0] = !mode_1x;
-    assign led0[1] = port_initialized;
-    assign led0[2] = link_initialized;
-    assign led0[3] = clk_lock;
-    `else
-    assign led0[0] = !mode_1x;
-    assign led0[1] = ~link_initialized;
-    `endif
+
+assign srio_led[0] = !mode_1x;
+assign srio_led[1] = ~link_initialized;
+
 
   // {{{ Drive LEDs to Development Board -------
 /*    assign led0[0] = 1'b1;
@@ -572,8 +574,8 @@ wire                      gt_rxdfelpmreset_in  ;
 
     generate if (!VALIDATION_FEATURES && !MIRROR) begin: db_req_gen
 
-    assign clk_rapid = log_clk;
-    assign reset_rapid = rapid_reset;
+    assign clk_srio = log_clk;
+    assign reset_srio = log_reset;
 
     input_reader input_reader_i
     (
@@ -618,7 +620,7 @@ wire                      gt_rxdfelpmreset_in  ;
         .nwr_req_in(nwr_req_in),
         .nwr_ready_o(nwr_ready_out),
         .nwr_busy_o(nwr_busy_out),
-        .nwr_ack_done_o(nwr_done_out),
+        .nwr_done_ack_o(nwr_done_out),
 
         .user_tready_o(user_tready),
         .user_addr(user_taddr),
@@ -700,18 +702,17 @@ wire                      gt_rxdfelpmreset_in  ;
 endgenerate
 //end
     `ifndef SIM
-    vio_0 vio_i (
+    vio_srio vio_srio_i (
     .clk(log_clk),                // input wire clk
     .probe_in0(mode_1x_vio),    // input wire [0 : 0] probe_in0
     .probe_in1(port_initialized_vio),    // input wire [0 : 0] probe_in1
     .probe_in2(link_initialized_vio),    // input wire [0 : 0] probe_in2
     .probe_in3(clk_lock_vio),    // input wire [0 : 0] probe_in3
-    .probe_in4(clk_lock_vio),    // input wire [0 : 0] probe_in4
     .probe_out0(db_self_check),  // output wire [0 : 0] probe_out0
     .probe_out1(nwr_req)  // output wire [0 : 0] probe_out1
 );
 
-    ila_0 ila_i (
+    ila_nwr ila_nwr_i (
         .clk(log_clk), // input wire clk
         .probe0(nwr_ready_ila), // input wire [0:0]  probe0
         .probe1(nwr_busy_ila), // input wire [0:0]  probe1
@@ -731,7 +732,7 @@ endgenerate
 
   // SRIO_DUT instantation -----------------
   // for production and shared logic in the core
-  srio_gen2_0  srio_gen2_0_inst
+  srio_gen2_lane4  srio_gen2_0_inst
      (//---------------------------------------------------------------
       .sys_clkp                (sys_clkp  ),
       .sys_clkn                (sys_clkn  ),
@@ -762,11 +763,23 @@ endgenerate
 
 
 // //---------------------------------------------------------------
-      .srio_rxn0               (srio_rxn0),
-      .srio_rxp0               (srio_rxp0),
+      .srio_rxn0                    (srio_rxn0),
+      .srio_rxp0                    (srio_rxp0),
+      .srio_rxn1                    (srio_rxn1),
+      .srio_rxp1                    (srio_rxp1),
+      .srio_rxn2                    (srio_rxn2),
+      .srio_rxp2                    (srio_rxp2),
+      .srio_rxn3                    (srio_rxn3),
+      .srio_rxp3                    (srio_rxp3),
 
-      .srio_txn0               (srio_txn0),
-      .srio_txp0               (srio_txp0),
+      .srio_txn0                    (srio_txn0),
+      .srio_txp0                    (srio_txp0),
+      .srio_txn1                    (srio_txn1),
+      .srio_txp1                    (srio_txp1),
+      .srio_txn2                    (srio_txn2),
+      .srio_txp2                    (srio_txp2),
+      .srio_txn3                    (srio_txn3),
+      .srio_txp3                    (srio_txp3),
 
       .s_axis_iotx_tvalid            (iotx_tvalid),
       .s_axis_iotx_tready            (iotx_tready),

@@ -149,12 +149,12 @@ ip_send ip_send_module
    .udp_data_length_in(udp_data_length),
 
    // from TCP send
-   .tcp_data_in(tcp_data),
-   .tcp_valid_in(tcp_data_valid),
-   .tcp_keep_in       (tcp_data_keep),
-   .tcp_last_in       (tcp_data_last),
+   .tcp_data_in('h0),
+   .tcp_valid_in('h0),
+   .tcp_keep_in       ('h0),
+   .tcp_last_in       ('h0),
    .tcp_ready_out     (),
-   .tcp_data_length_in(tcp_data_length),
+   .tcp_data_length_in('h0),
    // send buffer
    .ready_in(ip_send_ready),
    // output ports

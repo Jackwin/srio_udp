@@ -2,7 +2,7 @@
 module input_reader # (
     parameter DATA_WIDTH = 64,
     parameter DATA_LENGTH_WIDTH = 16,
-    parameter RAM_ADDR_WIDTH = 10
+    parameter RAM_ADDR_WIDTH = 7
     )
 (
     input                   clk,    // Clock

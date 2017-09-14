@@ -806,6 +806,7 @@ recv_top recv_top_i
 assign arp_reply_out_ila[0] = arp_reply_out;
 assign arp_reply_ack_ila[0] = arp_reply_ack;
 assign arp_ready_in_ila[0] = 1'b1;
+/*
 ila_1 ila_arp (
           .clk(tx_fifo_clock), // input wire clk
           .probe0(remote_ip_addr_out[7:0]), // input wire [7:0]  probe0
@@ -813,6 +814,7 @@ ila_1 ila_arp (
           .probe2(arp_reply_ack_ila), // input wire [0:0]  probe2
           .probe3(arp_ready_in_ila) // input wire [0:0]  probe3
      );
+     */
 
 `endif
 

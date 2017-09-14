@@ -276,7 +276,7 @@ assign tresp_tready_ila[0] = tresp_tready_in;
 assign tresp_tlast_ila[0] = tresp_tlast_o;
 assign treq_tvalid_ila[0] = treq_tvalid_in;
 assign treq_tlast_ila[0] = treq_tlast_in;
-
+/*
 generate
         if (SIM == 0) begin: ila_resp_gen
                 ila_resp ila_resp_i (
@@ -296,7 +296,7 @@ generate
         );
         end
 endgenerate
-
+*/
 /*
 reg [63:0] nwr_tdata;
 reg [7:0] nwr_tkeep;

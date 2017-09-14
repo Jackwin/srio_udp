@@ -38,17 +38,13 @@ module ethernet_srio_top (
     //-----------------------------
     input  [1:0]    mac_speed,
     input           update_speed,
-    input           configuration_valid,
     //input         serial_command, // tied to pause_req_s
     input           config_board,
     output          serial_response,
     input           gen_tx_data,
     input           chk_tx_data,
     input           reset_error,
-    output          frame_error,
-    output          frame_errorn,
-    output          activity_flash,
-    output          activity_flashn,
+   
 
     //SRIO interface
     // Clocks and Resets
@@ -58,16 +54,25 @@ module ethernet_srio_top (
     // high-speed IO
     input           srio_rxn0,              // Serial Receive Data
     input           srio_rxp0,              // Serial Receive Data
+    input           srio_rxn1,              // Serial Receive Data
+    input           srio_rxp1,              // Serial Receive Data
+    input           srio_rxn2,              // Serial Receive Data
+    input           srio_rxp2,              // Serial Receive Data
+    input           srio_rxn3,              // Serial Receive Data
+    input           srio_rxp3,              // Serial Receive Data
+
 
     output          srio_txn0,              // Serial Transmit Data
     output          srio_txp0,              // Serial Transmit Data
+    output          srio_txn1,              // Serial Transmit Data
+    output          srio_txp1,              // Serial Transmit Data
 
-    //input           sim_train_en,           // Set this only when simulating to reduce the size of counters
-       `ifdef SIM
-    output [3:0]        led0
-    `else
-    output  [1:0]   led0
-    `endif
+    output          srio_txn2,              // Serial Transmit Data
+    output          srio_txp2,              // Serial Transmit Data
+    output          srio_txn3,              // Serial Transmit Data
+    output          srio_txp3,              // Serial Transmit Data
+
+    output  [1:0]   srio_led
 
 );
 
@@ -116,16 +121,16 @@ tri_mode_ethernet_mac_0_example_design tri_mode_ethernet_mac_0_example_design_i
     .pause_req_s         (pause_req_s),
     .mac_speed           (mac_speed),
     .update_speed        (update_speed),
-    .configuration_valid (configuration_valid),
+    .configuration_valid (1'b1),
     .config_board        (config_board),
     .serial_response     (serial_response),
     .gen_tx_data         (gen_tx_data),
     .chk_tx_data         (chk_tx_data),
     .reset_error         (reset_error),
-    .frame_error         (frame_error),
-    .frame_errorn        (frame_errorn),
-    .activity_flash      (activity_flash),
-    .activity_flashn     (activity_flashn),
+    .frame_error         (),
+    .frame_errorn        (),
+    .activity_flash      (),
+    .activity_flashn     (),
 
     // Data interface
     .clk_udp             (clk_udp),
@@ -142,23 +147,38 @@ tri_mode_ethernet_mac_0_example_design tri_mode_ethernet_mac_0_example_design_i
 
 srio_example_top_srio_gen2_0 srio_example_top_srio_gen2_0_i
 (
-    .sys_clkp    (srio_refclkp),
-    .sys_clkn    (srio_refclkn),
-    .sys_rst_n     (~glbl_rst),
-    .srio_rxn0   (srio_rxn0),
-    .srio_rxp0   (srio_rxp0),
-    .srio_txn0   (srio_txn0),
-    .srio_txp0   (srio_txp0),
+    .sys_clkp           (srio_refclkp),
+    .sys_clkn           (srio_refclkn),
+    .sys_rst_n          (~glbl_rst),
+    .srio_rxn0          (srio_rxn0),
+    .srio_rxp0          (srio_rxp0),
+    .srio_rxn1          (srio_rxn1),
+    .srio_rxp1          (srio_rxp1),
+    .srio_rxn2          (srio_rxn2),
+    .srio_rxp2          (srio_rxp2),
+    .srio_rxn3          (srio_rxn3),
+    .srio_rxp3          (srio_rxp3),
 
-    .clk_srio   (clk_srio),
-    .reset_srio (reset_srio),
-    .user_tdata_in (srio_user_tdata),
-    .user_tvalid_in (srio_user_tvalid),
-    .user_tfirst_in(srio_user_tfirst),
-    .user_tkeep_in(srio_user_tkeep),
-    .user_tlen_in(srio_user_tlen),
-    .user_tlast_in(srio_user_tlast),
-    .user_tready_out(srio_user_tready),
+    .srio_txn0          (srio_txn0),
+    .srio_txp0          (srio_txp0),
+    .srio_txn1          (srio_txn1),
+    .srio_txp1          (srio_txp1),
+    .srio_txn2          (srio_txn2),
+    .srio_txp2          (srio_txp2),
+    .srio_txn3          (srio_txn3),
+    .srio_txp3          (srio_txp3),
+
+    .srio_led           (srio_led),
+
+    .clk_srio           (clk_srio),
+    .reset_srio         (reset_srio),
+    .user_tdata_in      (srio_user_tdata),
+    .user_tvalid_in     (srio_user_tvalid),
+    .user_tfirst_in     (srio_user_tfirst),
+    .user_tkeep_in      (srio_user_tkeep),
+    .user_tlen_in       (srio_user_tlen),
+    .user_tlast_in      (srio_user_tlast),
+    .user_tready_out    (srio_user_tready),
     .ack_o()
 
 );

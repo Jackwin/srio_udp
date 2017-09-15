@@ -178,7 +178,7 @@ localparam CMS_s = 3'b001;
 localparam DATA_s = 3'b010;
 localparam TAIL_s = 3'b100;
 localparam FPGA_FRAME_HEADER = 16'haaaa;
-localparam FPGA_FRAME_TAIL = 24'h00ffff
+localparam FPGA_FRAME_TAIL = 24'h00ffff;
 reg [2:0]           state;
 reg [7:0]           data_buf[1:0];
 wire [15:0]         data_2bytes;

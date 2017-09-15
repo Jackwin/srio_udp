@@ -272,25 +272,30 @@ timer_i
     .timer_out(timer_out)
 );
 
+generate
+    if (DEBUG == 1) begin
+        wire [0:0] arp_tvalid_ila;
+        wire [0:0] arp_tlast_ila;
+        wire [0:0] arp_reply_ila;
+        wire [0:0] axis_tvalid_ila;
+        assign arp_tvalid_ila[0] = arp_axis_tvalid_out;
+        assign arp_tlast_ila[0] = arp_axis_tlast_out;
+        assign axis_tvalid_ila[0] = axis_tvalid_in;
+        //assign arp_reply_ila[0] = arp_reply_r;
 
-wire [0:0] arp_tvalid_ila;
-wire [0:0] arp_tlast_ila;
-wire [0:0] arp_reply_ila;
-wire [0:0] axis_tvalid_ila;
-assign arp_tvalid_ila[0] = arp_axis_tvalid_out;
-assign arp_tlast_ila[0] = arp_axis_tlast_out;
-assign axis_tvalid_ila[0] = axis_tvalid_in;
-//assign arp_reply_ila[0] = arp_reply_r;
 
-ila_recv_buf ila_recv_top (
-        .clk(clk), // input wire clk
-        .probe0(arp_axis_tdata_out), // input wire [7:0]  probe0
-        .probe1(arp_tvalid_ila), // input wire [0:0]  probe1
-        .probe2(arp_tlast_ila), // input wire [0:0]  probe2
-        .probe3(axis_tvalid_ila), // input wire [0:0]  probe3
-        .probe4(state),
-        .probe5(byte_cnt),
-        .probe6(data_6bytes),
-        .probe7(data_2bytes)
-    );
+        ila_recv_buf ila_recv_top (
+                .clk(clk), // input wire clk
+                .probe0(arp_axis_tdata_out), // input wire [7:0]  probe0
+                .probe1(arp_tvalid_ila), // input wire [0:0]  probe1
+                .probe2(arp_tlast_ila), // input wire [0:0]  probe2
+                .probe3(axis_tvalid_ila), // input wire [0:0]  probe3
+                .probe4(state),
+                .probe5(byte_cnt),
+                .probe6(data_6bytes),
+                .probe7(data_2bytes)
+            );
+    end
+endgenerate
+
 endmodule

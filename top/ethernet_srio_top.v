@@ -100,6 +100,9 @@ wire                nwr_ready_out;
 wire                nwr_busy_out;
 wire                nwr_done_out;
 
+wire [7:0]          cmd_data;
+wire                cmd_valid;
+
 
 tri_mode_ethernet_mac_0_example_design tri_mode_ethernet_mac_0_example_design_i
 (
@@ -133,7 +136,6 @@ tri_mode_ethernet_mac_0_example_design tri_mode_ethernet_mac_0_example_design_i
     .chk_tx_data         (chk_tx_data),
     .reset_error         (reset_error),
 
-
     // Data interface
     .clk_udp             (clk_udp),
     .reset_udp           (reset_udp),
@@ -143,7 +145,10 @@ tri_mode_ethernet_mac_0_example_design tri_mode_ethernet_mac_0_example_design_i
     .udpdata_tkeep_out   (udpdata_tkeep),
     .udpdata_tfirst_out  (udpdata_tfirst),
     .udpdata_tlast_out   (udpdata_tlast),
-    .udpdata_length_out  (udpdata_length)
+    .udpdata_length_out  (udpdata_length),
+
+    .cmd_out             (cmd_data),
+    .cmd_valid_out       (cmd_valid)
 );
 
 

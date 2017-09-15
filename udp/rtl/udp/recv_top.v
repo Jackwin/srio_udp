@@ -49,7 +49,10 @@ module recv_top
     output          udpdata_tvalid_out,
     output          udpdata_tfirst_out,
     output          udpdata_tlast_out,
-    output [15:0]   udp_length_out
+    output [15:0]   udp_length_out,
+
+    output [7:0]    cmd_out,
+    output          cmd_valid_out
 
 );
 
@@ -105,7 +108,9 @@ udp_rcv udp_rcv_module
     .udpdata_tdata_out  (udpdata_tdata),
     .udpdata_tvalid_out (udpdata_tvalid),
     .udpdata_tlast_out  (udpdata_tlast),
-    .dest_port_out      ()
+    .dest_port_out      (),
+    .cmd_out            (cmd_out),
+    .cmd_valid_out      (cmd_valid_out)
 );
 
 arp_recv arp_recv_module

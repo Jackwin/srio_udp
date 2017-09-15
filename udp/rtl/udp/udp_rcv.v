@@ -21,7 +21,10 @@ module udp_rcv(
     output reg [7:0]    udpdata_tdata_out,
     output reg          udpdata_tvalid_out,
     output reg          udpdata_tlast_out,
-    output reg [15:0]   dest_port_out
+    output reg [15:0]   dest_port_out,
+
+    output [7:0]        cmd_out,
+    output              cmd_valid_out
 );
 localparam              BUF_DEPTH = 6;
 reg [4:0]               cnt;
@@ -132,6 +135,17 @@ always @(posedge clk) begin
         end
     end
 end
+
+cmd_parse cmd_parse_i (
+    .clk          (clk),
+    .reset        (reset),
+    .data_in      (udp_axis_tdata_in),
+    .valid_in     (udp_axis_tvalid_in),
+    .last_in      (),
+
+    .cmd_out      (cmd_out),
+    .cmd_valid_out(cmd_valid_out)
+    );
 assign udp_tvalid_ila[0] = udpdata_tvalid_out;
 assign udp_tlast_ila[0] = udpdata_tlast_out;
 assign udp_tready_ila[0] = udpdata_tready_in;
@@ -142,5 +156,97 @@ ila_udp ila_udp_i (
         .probe2(udp_tlast_ila), // input wire [0:0]  probe2
         .probe3(udp_tready_ila) // input wire [0:0]  probe3
     );
+
+endmodule
+
+
+module cmd_parse (
+    input           clk,
+    input           reset,
+
+    input [7:0]     data_in,
+    input           valid_in,
+    input           last_in,
+
+
+    output [7:0]    cmd_out,
+    output          cmd_valid_out
+
+);
+localparam IDLE_s = 3'b000;
+localparam CMS_s = 3'b001;
+localparam DATA_s = 3'b010;
+localparam TAIL_s = 3'b100;
+localparam FPGA_FRAME_HEADER = 16'haaaa;
+localparam FPGA_FRAME_TAIL = 24'h00ffff
+reg [2:0]           state;
+reg [7:0]           data_buf[1:0];
+wire [15:0]         data_2bytes;
+wire [23:0]         data_3bytes;
+
+reg [3:0]           cnt;
+reg [7:0]           cmd_data;
+reg                 cmd_valid;
+
+assign data_2bytes = {data_buf[0], data_in};
+assign data_3bytes = {data_buf[1], data_buf[0], data_in};
+
+always @(posedge clk) begin
+    if (reset) begin
+        state <= IDLE_s;
+        {data_buf[1], data_buf[0]} <= 'h0;
+        cnt <= 'h0;
+        cmd_data <= 'h0;
+        cmd_valid <= 1'b0;
+    end
+    else if (valid_in) begin
+        data_buf[1] <= data_buf[0];
+        data_buf[0] <= data_in;
+        cmd_valid <= 1'b0;
+        case(state)
+            IDLE_s: begin
+                cnt <= 'h0;
+                if (data_2bytes == FPGA_FRAME_HEADER) begin
+                    state <= CMD_s;
+                end
+                else begin
+                    state <= IDLE_s;
+                end
+            end
+            CMD_s: begin
+                cmd_data <= data_in;
+                state <= DATA_s;
+            end
+            DATA_s: begin
+                cnt <= cnt + 1'd1;
+                if (data_in != {4'h0, cnt}) begin
+                    state <= IDLE_s;
+                end
+                else if (data_in == 8'h0f) begin
+                    state <= TAIL_s;
+                    cnt <= 'h0;
+                end
+            end
+            TAIL_s: begin
+                if (cnt == 4'd2 && data_3bytes == FPGA_FRAME_TAIL) begin
+                    cmd_valid <= 1'b1;
+                    state <= IDLE_s;
+                end
+                else if (cnt == 4'd3) begin
+                    state <= IDLE_s;
+                end
+                else begin
+                    cnt <= cnt + 1'd1;
+                end
+            end
+            default: begin
+                state <= IDLE_s;
+            end
+        endcase // cnt
+    end
+end
+
+assign cmd_out = cmd_data;
+assign cmd_valid_out = cmd_valid;
 
 endmodule

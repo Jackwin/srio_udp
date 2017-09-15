@@ -134,61 +134,62 @@
 module tri_mode_ethernet_mac_0_example_design
 (
      // asynchronous reset
-     input         glbl_rst,
-        output        phy_resetn,
+    input           glbl_rst,
+    output          phy_resetn,
 
      //200MHz input clock
-     input              clk_in_p,
-     input         clk_in_n,
+    input           clk_in_p,
+    input           clk_in_n,
 
-     input         gtrefclk_p,
-     input              gtrefclk_n,
-     output        txp,
-     output        txn,
-     input         rxp,
-     input         rxn,
+    input           gtrefclk_p,
+    input           gtrefclk_n,
+    output          txp,
+    output          txn,
+    input           rxp,
+    input           rxn,
 
-     output        synchronization_done,
-     output                  linkup,
+    output          synchronization_done,
+    output          linkup,
 
-     // MDIO Interface
-     //---------------
-     inout            mdio,
-     output          mdc,
-     // Serialised statistics vectors
-     //------------------------------
-     output          tx_statistics_s,
-     output          rx_statistics_s,
+    // MDIO Interface
+    //---------------
+    inout           mdio,
+    output          mdc,
+    // Serialised statistics vectors
+    //------------------------------
+    output          tx_statistics_s,
+    output          rx_statistics_s,
 
-     // Serialised Pause interface controls
-     //------------------------------------
-     input            pause_req_s,
+    // Serialised Pause interface controls
+    //------------------------------------
+    input           pause_req_s,
 
-     // Main example design controls
-     //-----------------------------
-     input  [1:0]  mac_speed,
-     input            update_speed,
-     input            configuration_valid,
-     //input            serial_command, // tied to pause_req_s
-     input            config_board,
-     output          serial_response,
-     input            gen_tx_data,
-     input            chk_tx_data,
-     input            reset_error,
+    // Main example design controls
+    //-----------------------------
+    input [1:0]     mac_speed,
+    input           update_speed,
+    input           configuration_valid,
+    //input            serial_command, // tied to pause_req_s
+    input           config_board,
+    output          serial_response,
+    input           gen_tx_data,
+    input           chk_tx_data,
+    input           reset_error,
 
-     // Data Interface
-     output             clk_udp,
-     output             reset_udp,
-     input            udpdata_tready_in,
-     output [31:0] udpdata_tdata_out,
-     output          udpdata_tvalid_out,
-     output [3:0]  udpdata_tkeep_out,
-     output          udpdata_tfirst_out,
-     output          udpdata_tlast_out,
-     output [15:0] udpdata_length_out
+    // Data Interface
+    output          clk_udp,
+    output          reset_udp,
+    input           udpdata_tready_in,
+    output [31:0]   udpdata_tdata_out,
+    output          udpdata_tvalid_out,
+    output [3:0]    udpdata_tkeep_out,
+    output          udpdata_tfirst_out,
+    output          udpdata_tlast_out,
+    output [15:0]   udpdata_length_out,
 
-
-     );
+    output [7:0]    cmd_out,
+    output          cmd_valid_out
+);
 
     //----------------------------------------------------------------------------
     // internal signals used in this top level wrapper.
@@ -794,7 +795,9 @@ recv_top recv_top_i
      .udpdata_tvalid_out (udpdata_tvalid_out),
      .udpdata_tkeep_out  (udpdata_tkeep_out),
      .udpdata_tlast_out  (udpdata_tlast_out),
-     .udp_length_out      (udpdata_length_out)
+     .udp_length_out      (udpdata_length_out),
+     .cmd_out            (cmd_out),
+     .cmd_valid_out      (cmd_valid_out)
 
 );
 

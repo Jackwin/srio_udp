@@ -34,6 +34,8 @@ reg [7:0]       data_buf[0:3];
 reg [13:0]      udp_length;
 wire [31:0]     data_4bytes;
 wire [15:0]     data_2bytes;
+
+reg [15:0]      udp_length_buf0, udp_length_buf1, udp_length_buf2;
 integer         k;
 
 always @(posedge clk) begin
@@ -81,7 +83,19 @@ end
 assign data_4bytes = {data_buf[2], data_buf[1], data_buf[0], udp_axis_tdata_in};
 assign data_2bytes = {data_buf[0], udp_axis_tdata_in};
 // For SRIO, the data length is the actual length minuses 1 byte.
-assign udp_length_out = udp_length - 1'd1;
+
+always @(posedge clk_32) begin
+    if (reset_32) begin
+        udp_length_buf0 <= 'h0;
+        udp_length_buf1 <= 'h0;
+    end
+    else begin
+        udp_length_buf0 <= udp_length - 1'd1;
+        udp_length_buf1 <= udp_length_buf0;
+        udp_length_buf2 <= udp_length_buf1;
+    end
+end
+assign udp_length_out = udp_length_buf2;
 
 axis_8to32 axis8to32_i (
     .clk_8(clk),

@@ -94,7 +94,7 @@ always @(posedge clk) begin
                                 data_buf[4], data_buf[3]};
             remote_ip_addr_out <= {data_buf[2], data_buf[1], data_buf[0], arp_tdata_in};
         end
-        if (arp_tvalid_in && byte_cnt == 5'd27) begin
+        if (arp_tvalid_in && (byte_cnt == 5'd27)) begin
             // Filter the local_ip_address and generate ARP reply operation
             if (des_ip == local_ip_addr) begin
                 arp_reply_r <= 1'b1;
@@ -113,13 +113,15 @@ always @(posedge clk) begin
 end
 
 assign arp_reply_out = reply_ready_in ? arp_reply_r : 1'b0;
-
+/*
 wire [0:0] arp_tvalid_ila;
 wire [0:0] arp_tlast_ila;
 wire [0:0] arp_reply_ila;
+wire [0:0] arp_reply_ack_ila;
 assign arp_tvalid_ila[0] = arp_tvalid_in;
 assign arp_tlast_ila[0] = arp_tlast_in;
 assign arp_reply_ila[0] = arp_reply_r;
+assign arp_reply_ack_ila[0] = arp_reply_ack_r2;
 
 ila_arp ila_arp (
         .clk(clk), // input wire clk
@@ -129,7 +131,8 @@ ila_arp ila_arp (
         .probe3(arp_tdata_in),
         .probe4(arp_tvalid_ila),
         .probe5(arp_tlast_ila),
-        .probe6(arp_reply_ila)
+        .probe6(local_ip_addr),
+        .probe7(arp_reply_ack_ila)
     );
-
+*/
 endmodule

@@ -124,7 +124,7 @@
 
 `timescale 1 ps/1 ps
 `define UDP
-`define MY_IP_ADDR              32'h60a80006 // 192.168.0.6
+`define MY_IP_ADDR              32'hc0a80006 // 192.168.0.6
 `define MY_MAC_ADDR              48'hdd0504030201
 //------------------------------------------------------------------------------
 // The module declaration for the example_design level wrapper.
@@ -843,48 +843,48 @@ gig_ethernet_pcs_pma_0_support
  core_support_i
  (
 
-     .gtrefclk_p                             (gtrefclk_p),
-     .gtrefclk_n                             (gtrefclk_n),
-     .gtrefclk_out                          (),
-     .txp                                         (txp),
-     .txn                                         (txn),
-     .rxp                                         (rxp),
-     .rxn                                         (rxn),
-     .mmcm_locked_out                         (mmcm_locked),
-     .userclk_out                              (userclk),
-     .userclk2_out                             (userclk2),
-     .clk_32_out                         (clk_32),
-     .rxuserclk_out                         (),
-     .rxuserclk2_out                        (rxuserclk2),
-     .independent_clock_bufg                (independent_clock_bufg),
-     .pma_reset_out                            (),
-     .resetdone                                 (gtx_resetdone),
+    .gtrefclk_p             (gtrefclk_p),
+    .gtrefclk_n             (gtrefclk_n),
+    .gtrefclk_out           (),
+    .txp                    (txp),
+    .txn                    (txn),
+    .rxp                    (rxp),
+    .rxn                    (rxn),
+    .mmcm_locked_out        (mmcm_locked),
+    .userclk_out            (userclk),
+    .userclk2_out           (userclk2),
+    .clk_32_out             (clk_32),
+    .rxuserclk_out          (),
+    .rxuserclk2_out                        (rxuserclk2),
+    .independent_clock_bufg                (independent_clock_bufg),
+    .pma_reset_out                            (),
+    .resetdone                                 (gtx_resetdone),
 
-     .sgmii_clk_r                            (),
-     .sgmii_clk_f                            (),
-     .sgmii_clk_en                             (clk_enable),
-     .gmii_txd                                  (gmii_txd_int),
-     .gmii_tx_en                                (gmii_tx_en_int),
-     .gmii_tx_er                                (gmii_tx_er_int),
-     .gmii_rxd                                  (gmii_rxd_int),
-     .gmii_rx_dv                                (gmii_rx_dv_int),
-     .gmii_rx_er                                (gmii_rx_er_int),
-     .gmii_isolate                             (gmii_isolate),
-     .configuration_vector                  (configuration_vector),
-     //.configuration_valid                    (configuration_valid),
-     .an_interrupt                             (an_interrupt),
-     .an_adv_config_vector                  (an_adv_config_vector),
-     //.an_adv_config_val                      (1'b0),
-     .an_restart_config                      (an_restart_config),
-     .speed_is_10_100                         (speedis10100),
-     .speed_is_100                             (speedis100),
-     .status_vector                            (status_vector_int),
-     .reset                                      (glbl_rst),
+    .sgmii_clk_r                            (),
+    .sgmii_clk_f                            (),
+    .sgmii_clk_en                             (clk_enable),
+    .gmii_txd                                  (gmii_txd_int),
+    .gmii_tx_en                                (gmii_tx_en_int),
+    .gmii_tx_er                                (gmii_tx_er_int),
+    .gmii_rxd                                  (gmii_rxd_int),
+    .gmii_rx_dv                                (gmii_rx_dv_int),
+    .gmii_rx_er                                (gmii_rx_er_int),
+    .gmii_isolate                             (gmii_isolate),
+    .configuration_vector                  (configuration_vector),
+    //.configuration_valid                    (configuration_valid),
+    .an_interrupt                             (an_interrupt),
+    .an_adv_config_vector                  (an_adv_config_vector),
+    //.an_adv_config_val                      (1'b0),
+    .an_restart_config                      (an_restart_config),
+    .speed_is_10_100                         (speedis10100),
+    .speed_is_100                             (speedis100),
+    .status_vector                            (status_vector_int),
+    .reset                                      (glbl_rst),
 
 
-     .signal_detect                            (signal_detect),
-     .gt0_qplloutclk_out                 (),
-     .gt0_qplloutrefclk_out             ()
+    .signal_detect                            (signal_detect),
+    .gt0_qplloutclk_out                 (),
+    .gt0_qplloutrefclk_out             ()
      );
 
 
@@ -922,6 +922,7 @@ ila_tx tx_ila (
   .probe6(tx_axis_fifo_tvalid),
   .probe7(tx_axis_fifo_tlast)
      );
+/*
 ila_rx ila_rx_i (
           .clk(tx_fifo_clock), // input wire clk
           .probe0(rx_axis_fifo_tdata), // input wire [7:0]  probe0
@@ -929,10 +930,12 @@ ila_rx ila_rx_i (
           .probe2(rx_axis_fifo_tlast_ila), // input wire [0:0]  probe2
           .probe3(rx_axis_fifo_tready_ila) // input wire [0:0]  probe3
      );
+
 vio_tx_gen vio_tx_gen_i (
   .clk(tx_fifo_clock),                     // input wire clk
   .probe_out0(tx_data_gen_vio)  // output wire [0 : 0] probe_out0
 );
+*/
 
 endmodule
 

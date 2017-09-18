@@ -8,7 +8,9 @@ Current implementation does not utilize checksum.
 **************/
 
 
-module udp_rcv(
+module udp_rcv #
+    ( parameter DEBUG = 0)
+    (
     input               clk,
     input               reset,
 
@@ -146,16 +148,20 @@ cmd_parse cmd_parse_i (
     .cmd_out      (cmd_out),
     .cmd_valid_out(cmd_valid_out)
     );
-assign udp_tvalid_ila[0] = udpdata_tvalid_out;
-assign udp_tlast_ila[0] = udpdata_tlast_out;
-assign udp_tready_ila[0] = udpdata_tready_in;
-ila_udp ila_udp_i (
-        .clk(clk), // input wire clk
-        .probe0(udpdata_tdata_out), // input wire [7:0]  probe0
-        .probe1(udp_tvalid_ila), // input wire [0:0]  probe1
-        .probe2(udp_tlast_ila), // input wire [0:0]  probe2
-        .probe3(udp_tready_ila) // input wire [0:0]  probe3
-    );
+generate
+    if (DEBUG == 1) begin
+        assign udp_tvalid_ila[0] = udpdata_tvalid_out;
+        assign udp_tlast_ila[0] = udpdata_tlast_out;
+        assign udp_tready_ila[0] = udpdata_tready_in;
+        ila_udp ila_udp_i (
+                .clk(clk), // input wire clk
+                .probe0(udpdata_tdata_out), // input wire [7:0]  probe0
+                .probe1(udp_tvalid_ila), // input wire [0:0]  probe1
+                .probe2(udp_tlast_ila), // input wire [0:0]  probe2
+                .probe3(udp_tready_ila) // input wire [0:0]  probe3
+            );
+    end
+endgenerate
 
 endmodule
 
@@ -174,7 +180,7 @@ module cmd_parse (
 
 );
 localparam IDLE_s = 3'b000;
-localparam CMS_s = 3'b001;
+localparam CMD_s = 3'b001;
 localparam DATA_s = 3'b010;
 localparam TAIL_s = 3'b100;
 localparam FPGA_FRAME_HEADER = 16'haaaa;

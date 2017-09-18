@@ -160,8 +160,6 @@ ip_send ip_send_module
    .ready_in(ip_send_ready),
    // output ports
    .conflict_flag_out (),
-   .data_length_out   (),
-   .length_valid_out  (),
    .oip_addr(ip_send_ip_addr),
    .axis_tdata_out(send_ip_data),
    .axis_tvalid_out(send_ip_valid),

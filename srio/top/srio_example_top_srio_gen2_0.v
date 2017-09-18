@@ -58,9 +58,9 @@ module srio_example_top_srio_gen2_0 #(
     `endif
     parameter SIM_VERBOSE               = 0, // If set, generates unsynthesizable reporting
     parameter VALIDATION_FEATURES       = 0, // If set, uses internal instruction sequences for hw and sim test
-    parameter QUICK_STARTUP             = 1, // If set, quick-launch configuration access is contained here
+    parameter QUICK_STARTUP             = 0, // If set, quick-launch configuration access is contained here
     parameter STATISTICS_GATHERING      = 0, // If set, I/O can be rerouted to the maint port [0,1]
-    parameter C_LINK_WIDTH              = 1
+    parameter C_LINK_WIDTH              = 4
     )
    //  port declarations ----------------
    (
@@ -68,7 +68,7 @@ module srio_example_top_srio_gen2_0 #(
     input            sys_clkp,              // MMCM reference clock
     input            sys_clkn,              // MMCM reference clock
 
-    input            sys_rst_n,               // Global reset signal
+    input            sys_rst,               // Global reset signal
 
     // high-speed IO
     input           srio_rxn0,              // Serial Receive Data
@@ -206,42 +206,6 @@ module srio_example_top_srio_gen2_0 #(
 
 //--
 //----------------------------------------------------------------------------//
-//wire [C_LINK_WIDTH-1:0]         gt_drpdo_out            ;
-//wire [C_LINK_WIDTH-1:0]         gt_drprdy_out           ;
-wire [C_LINK_WIDTH*9-1:0]         gt_drpaddr_in           ;
-wire [C_LINK_WIDTH*16-1:0]        gt_drpdi_in             ;
-wire [C_LINK_WIDTH-1:0]           gt_drpen_in             ;
-wire [C_LINK_WIDTH-1:0]           gt_drpwe_in             ;
-wire [C_LINK_WIDTH-1:0]           gt_txpmareset_in        ;
-wire [C_LINK_WIDTH-1:0]           gt_rxpmareset_in        ;
-wire [C_LINK_WIDTH-1:0]           gt_txpcsreset_in        ;
-wire [C_LINK_WIDTH-1:0]           gt_rxpcsreset_in        ;
-wire [C_LINK_WIDTH-1:0]           gt_eyescanreset_in      ;
-wire [C_LINK_WIDTH-1:0]           gt_eyescantrigger_in    ;
-//wire [C_LINK_WIDTH-1:0]         gt_eyescandataerror_out ;
-wire[C_LINK_WIDTH*3-1:0]          gt_loopback_in          ;
-wire                            gt_rxpolarity_in        ;
-wire                            gt_txpolarity_in        ;
-wire                            gt_rxlpmen_in           ;
-wire [C_LINK_WIDTH*5-1:0]         gt_txprecursor_in       ;
-wire [C_LINK_WIDTH*5-1:0]         gt_txpostcursor_in      ;
-wire [3:0]                gt0_txdiffctrl_in;
-wire                      gt_txprbsforceerr_in ;
-wire [C_LINK_WIDTH*3-1:0]   gt_txprbssel_in      ;
-wire [C_LINK_WIDTH*3-1:0]   gt_rxprbssel_in      ;
-//wire                      gt_rxprbserr_out     ;
-wire                      gt_rxprbscntreset_in ;
-wire                      gt_rxcdrhold_in      ;
-wire                      gt_rxdfelpmreset_in  ;
-//wire                      gt_rxcommadet_out    ;
-//wire [C_LINK_WIDTH*8-1:0]   gt_dmonitorout_out   ;
-//wire [C_LINK_WIDTH-1:0]     gt_rxresetdone_out   ;
-//wire [C_LINK_WIDTH-1:0]     gt_txresetdone_out   ;
-//wire [C_LINK_WIDTH*3-1:0]   gt_rxbufstatus_out   ;
-//wire [C_LINK_WIDTH*3-1:0]   gt_txbufstatus_out   ;
-
-
-//--
 
     // other core output signals that may be used by the user
     wire     [23:0] port_timeout;           // Timeout value user can use to detect a lost packet
@@ -372,7 +336,7 @@ wire                      gt_rxdfelpmreset_in  ;
     wire  [31:0]    stats_data;
   // }}} End wire declarations ------------
 //Added by Chunjie
-  wire sys_rst;
+  //wire sys_rst;
 
    wire [15:0] src_id = 16'h01;
   wire [15:0] des_id = 16'hf0;
@@ -411,6 +375,7 @@ wire                      gt_rxdfelpmreset_in  ;
   wire [0:0]        port_initialized_vio;
   wire [0:0]        link_initialized_vio;
   wire [0:0]        clk_lock_vio;
+  wire [0:0]        port_error_vio;
 
   wire [0:0]        nwr_ready_ila;
   wire [0:0]        nwr_busy_ila;
@@ -422,7 +387,7 @@ wire                      gt_rxdfelpmreset_in  ;
   wire [0:0]        iotx_tlast_ila;
 
   wire              sim_train_en = 1'b0;
-  assign sys_rst = ~sys_rst_n;
+  //assign sys_rst = ~sys_rst_n;
 
 assign srio_led[0] = !mode_1x;
 assign srio_led[1] = ~link_initialized;
@@ -481,6 +446,7 @@ assign srio_led[1] = ~link_initialized;
   assign port_initialized_vio[0] = port_initialized;
   assign link_initialized_vio[0] = link_initialized;
   assign clk_lock_vio[0] = clk_lock;
+  assign port_error_vio[0] = port_error;
 
   assign nwr_ready_ila[0] = nwr_ready_out;
   assign nwr_busy_ila[0] = nwr_busy_out;
@@ -610,7 +576,7 @@ assign srio_led[1] = ~link_initialized;
         .src_id(src_id),
         .des_id(des_id),
 
-        .self_check_in(self_check_in),
+        .self_check_in(db_self_check_en),
         .nwr_req_in(nwr_req_in),
         .rapidIO_ready_o(rapidIO_ready_out),
         .link_initialized(link_initialized),
@@ -679,7 +645,7 @@ assign srio_led[1] = ~link_initialized;
       .log_rst(log_rst),
 
       .src_id(16'hf0),
-      .des_id(16'h01),
+      .des_id(16'hb0),
 
       .ed_ready_in(ed_ready),
 
@@ -901,7 +867,7 @@ endgenerate
   assign val_maintr_rdata = maintr_rdata;
   assign val_maintr_rresp = maintr_rresp;
 
-
+/*
   // If internally-driven sequences are required
   generate if (QUICK_STARTUP) begin: quick_maint_gen
    srio_quick_start_srio_gen2_0 srio_quick_start_inst (
@@ -951,7 +917,7 @@ endgenerate
   endgenerate
 
   // }}} End of Maintenance Interface -------------
-
+*/
 
 
 

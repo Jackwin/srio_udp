@@ -144,7 +144,7 @@ always @(*) begin
     endcase // word_cnt
 end
 
-fifo_75x512 fifo_75x512_i (
+fifo_75x256 fifo_75x256_i (
     .rst(reset_udp),
     .wr_clk(fifo_wr_clk),
     .rd_clk(fifo_rd_clk),

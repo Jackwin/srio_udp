@@ -57,8 +57,6 @@ module ip_send
     // output ports
     output reg          conflict_flag_out,
     output reg [31:0]   oip_addr,
-    output [15:0]       data_length_out,
-    output reg          length_valid_out,
 
     output reg [31:0]   axis_tdata_out,
     output reg          axis_tvalid_out,
@@ -90,7 +88,7 @@ integer              k;
 
 assign udp_ready_out = ready_in;
 assign tcp_ready_out = ready_in;
-assign data_length_out = total_length;
+//assign data_length_out = total_length;
 
 // Choose the data source
 always @(posedge clk or posedge reset) begin

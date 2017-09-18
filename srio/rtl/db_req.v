@@ -82,7 +82,7 @@ localparam [2:0] WAIT_TARGET_ACK_s = 3'd6;
 reg [2:0] state;
 
 reg  [15:0] log_rst_shift;
-wire        log_rst_q;
+//wire        log_rst_q;
 
 // nwr signals
 wire [63:0] nwr_instr;
@@ -167,18 +167,22 @@ wire [7:0] byte_left;
 wire [0:0] ireq_tlast_ila, ireq_tvalid_ila, ireq_tready_ila;
 wire [0:0] iresp_tlast_ila, iresp_tvalid_ila;
 
+
+// TODO Delete log_rst
+/*
 always @(posedge log_clk or posedge log_rst) begin
     if (log_rst)
           log_rst_shift <= 16'hFFFF;
     else
           log_rst_shift <= {log_rst_shift[14:0], 1'b0};
 end
-assign log_rst_q = log_rst_shift[15];
+assign log_rst = log_rst_shift[15];
+*/
 assign ireq_condition_on = ireq_tvalid_o && ireq_tready_in;
 
 
 always @(posedge log_clk) begin
-    if (log_rst_q) begin
+    if (log_rst) begin
         state <= IDLE_s;
         nwr_ready_o <= 1'b0;
         nwr_busy_o <= 1'b1;
@@ -280,31 +284,6 @@ always @(posedge log_clk) begin
 end
 
 assign ireq_condition_on = ireq_tready_in && ireq_tvalid_o;
-/*wire ireq_tvalid_next;
-always @(*) begin
-    ireq_tvalid_next = ireq_tvalid_o;
-    case(state)
-        DB_REQ_s: begin
-            if (ireq_tready_in | ~ireq_tvalid_o) begin
-                ireq_tvalid_next <= 1'b1;
-            end
-        end
-        IDLE_s, DB_RESP_s, BF_NWR_s, WAIT_TARGET_ACK_s: begin
-            ireq_tvalid_next <= 1'b0;
-        end
-        NWR_s: begin
-            if (ireq_tready_in | ~ireq_tvalid_o) begin
-                ireq_tvalid_next <= current_user_valid;
-            end
-        end
-        INTEG_DB_REQ_s: begin
-            if (ireq_tready_in | ~ireq_tvalid_o) begin
-                ireq_tvalid_next <= 1'b1;
-            end
-        end
-    endcase // state
-end
-*/
 
 always @(posedge log_clk) begin
     if (log_rst) begin
@@ -391,29 +370,6 @@ always @(posedge log_clk) begin
                 //ireq_tvalid_o = current_user_valid && ireq_tready_in;
                 //ireq_tkeep_o = current_user_keep ;
                 // In one transfer, called as packet here, the maximum length is 256 bytes.
-/*
-                if (nwr_packect_transfer_cnt == packect_transfer_times && nwr_8byte_cnt == current_user_size) begin
-                    ireq_tvalid_o <= 1'b0;
-                end
-                else if (nwr_8byte_cnt == 8'd32) begin
-                    ireq_tvalid_o <= 1'b0;
-                end
-                else begin
-                    ireq_tvalid_o <= current_user_valid;
-                end
-
-				if (ireq_tready_in) begin
-					if (nwr_packect_transfer_cnt == packect_transfer_times && !ireq_tlast_o) begin
-						ireq_tlast_o <= current_user_last;
-					end
-					else if (nwr_8byte_cnt == 8'd32) begin  // The end of a 64-Dword packect
-						ireq_tlast_o <= 1'b1;
-					end
-					else begin
-						ireq_tlast_o <= 1'b0;
-					end
-				end
-*/
             end // NWR_s:
             INTEG_DB_REQ_s: begin
                 if (ireq_condition_on) begin
@@ -463,7 +419,7 @@ always @(posedge log_clk) begin
     end
 end
 
-always @(posedge log_clk) begin : proc_timer
+always @(posedge log_clk or posedge log_rst) begin : proc_timer
     if(log_rst) begin
          timer_cnt <= 0;
          over_time <= 1'b0;
@@ -483,7 +439,7 @@ always @(posedge log_clk) begin : proc_timer
     end
 end
 
-always @(posedge log_clk) begin : proc_transfer_timers
+always @(posedge log_clk or posedge log_rst) begin : proc_transfer_timers
     if(log_rst) begin
         packect_transfer_times <= 0;
     end else if (state == NWR_s) begin
@@ -497,7 +453,7 @@ always @(posedge log_clk) begin : proc_transfer_timers
     end
 end
 
-always @(posedge log_clk) begin : proc_nwr_write_cnt
+always @(posedge log_clk or posedge log_rst) begin : proc_nwr_write_cnt
     if(log_rst) begin
         nwr_8byte_cnt <= 0;
         nwr_packect_transfer_cnt <= 'h0;
@@ -535,7 +491,7 @@ assign error_target_id = des_id;
 assign error_type_o = (state == DB_RESP_s && over_time) ? 2'h1 :
                         ((state == WAIT_TARGET_ACK_s && over_time) ? 2'h2 : 2'h0);
 
-always @(posedge log_clk) begin
+always @(posedge log_clk or posedge log_rst) begin
     if (log_rst) begin
         nwr_done_r <= 1'b0;
     end
@@ -560,8 +516,8 @@ always @(negedge log_clk) begin
 end
 
 // nwr_srcID control logic
-always @(posedge log_clk ) begin
-    if (log_rst_q) begin
+always @(posedge log_clk or posedge log_rst) begin
+    if (log_rst) begin
         bit_reverse <= 'h0;
     end
     else begin
@@ -577,8 +533,8 @@ end
 assign nwr_srcID = {7'h0, bit_reverse};
 
 // Target endpoint address nwr_srcID x 1M
-always @(posedge log_clk) begin
-    if (log_rst_q) begin
+always @(posedge log_clk or posedge log_rst) begin
+    if (log_rst) begin
         target_ed_addr <= 'h0;
         db_req_inform <= 0;
     end
@@ -638,8 +594,8 @@ end
 
 assign nwr_advance_condition = ireq_tready_in && ireq_tvalid_o && (state == NWR_s);
 
-always @(posedge log_clk) begin
-    if (log_rst_q) begin
+always @(posedge log_clk or posedge log_rst) begin
+    if (log_rst) begin
         nwr_first_beat <= 1'b1;
     end
     else begin
@@ -657,7 +613,7 @@ assign fifo_rd_en = ((state == NWR_s || state == BF_NWR_s) && ~fifo_empty && ire
 //assign fifo_dout_valid = fifo_rd_en;
 assign user_tready_o = ~fifo_full;
 assign fifo_clk = log_clk;
-assign fifo_rst = log_rst_q;
+assign fifo_rst = log_rst;
 //assign fifo_din = {user_tvalid_r, fifo_data_first, user_tkeep_r, user_tlast_r, user_tdata_r};
 assign fifo_din = user_tfirst_in ? {1'b1, user_tfirst_in, user_tkeep_r, user_tlast_r, {56'h0, {user_tsize_in}}}
                                  : {user_tvalid_r, 1'b0, user_tkeep_r, user_tlast_r, user_tdata_r};
@@ -666,7 +622,7 @@ assign fifo_wr_en = user_tvalid_in || user_tvalid_r;
 // When in simulation, FIFO output is delayed by about 100 ps, which will affect the combined logics
 // Make the fifo_dout aligned with the posedge of log_clk in simulation
 
-always @(posedge log_clk) begin
+always @(posedge log_clk or posedge log_rst) begin
     if (log_rst) begin
         fifo_rd_en_r <= 3'b000;
         fifo_dout_valid <= 1'b0;
@@ -685,7 +641,7 @@ assign current_user_data = fifo_dout[63:0];
 //assign current_user_size = (user_data_first) ? user_tdata_r[7:0]  : current_user_size;
 //assign current_user_size = (current_user_first) ? current_user_data[7:0]  : current_user_size;
 
-always @(posedge log_clk) begin
+always @(posedge log_clk or posedge log_rst) begin
     if (log_rst) begin
         current_user_size <= 'hff;
     end
@@ -729,8 +685,7 @@ fifo_75x512 user_data_fifo (
   .rd_en(fifo_rd_en),            // input wire rd_en
   .dout(fifo_dout),              // output wire [65 : 0] dout
   .full(fifo_full),              // output wire full
-  .empty(fifo_empty),            // output wire empty
-  .data_count(fifo_data_cnt)  // output wire [8 : 0] data_count
+  .empty(fifo_empty)            // output wire empty
 );
 
 //----------------------- Debug ----------------------------------------

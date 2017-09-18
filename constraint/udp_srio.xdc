@@ -1,7 +1,7 @@
 
 #------------------------ SRIO BEGIN--------------------------------------
 
-create_clock -period 6.4 -name sys_clkp [get_ports srio_refclkp]
+create_clock -period 8.0 -name sys_clkp [get_ports srio_refclkp]
 set_case_analysis 0 [list [get_pins -hierarchical *mode_1x]]
 set_false_path -to [get_cells -hierarchical -filter {name =~ *gt_decode_error_phy_clk_stg1_reg}]
 
@@ -34,11 +34,12 @@ set_property PACKAGE_PIN A6 [get_ports srio_rxp3]
 set_property PACKAGE_PIN A5 [get_ports srio_rxn3]
 
 ##GPIO_LED0
-set_property PACKAGE_PIN AM39[get_ports srio_led[0]]
-set_property IOSTANDARD LVCMOS18 [get_ports srio_led[0]]
+
+set_property PACKAGE_PIN AM39 [get_ports {srio_led[0]}]
+set_property IOSTANDARD LVCMOS18 [get_ports {srio_led[0]}]
 ##GPIO_LED1
-set_property PACKAGE_PIN AN39 [get_ports srio_led[1]]
-set_property IOSTANDARD LVCMOS18 [get_ports srio_led[1]]
+set_property PACKAGE_PIN AN39 [get_ports {srio_led[1]}]
+set_property IOSTANDARD LVCMOS18 [get_ports {srio_led[1]}]
 
 
 #------------------------ SRIO END --------------------------------------
@@ -53,7 +54,7 @@ create_clock -period 5.000 [get_ports clk_in_n]
 
 #125M input clock
 set_property PACKAGE_PIN AH7 [get_ports gtrefclk_n]
-create_clock -period 8.000 -name gtrefclk [get_pins core_support_i/core_clocking_i/ibufds_gtrefclk/O]
+create_clock -period 8.000 -name gtrefclk [get_pins "*/core_support_i/core_clocking_i/ibufds_gtrefclk/O"]
 
 set_false_path -from [get_clocks -include_generated_clocks clk_in_p] -to [get_clocks -include_generated_clocks gtrefclk]
 set_false_path -from [get_clocks -include_generated_clocks gtrefclk] -to [get_clocks -include_generated_clocks clk_in_p]
@@ -76,11 +77,11 @@ set_property PACKAGE_PIN AH31 [get_ports mdc]
 set_property IOSTANDARD LVCMOS18 [get_ports mdc]
 
 #LED2
-set_property PACKAGE_PIN AR37 [get_ports frame_error]
-set_property IOSTANDARD LVCMOS18 [get_ports frame_error]
+#set_property PACKAGE_PIN AR37 [get_ports frame_error]
+#set_property IOSTANDARD LVCMOS18 [get_ports frame_error]
 #LED3
-set_property PACKAGE_PIN AT37 [get_ports activity_flash]
-set_property IOSTANDARD LVCMOS18 [get_ports activity_flash]
+#set_property PACKAGE_PIN AT37 [get_ports activity_flash]
+#set_property IOSTANDARD LVCMOS18 [get_ports activity_flash]
 
 set_property PACKAGE_PIN AV39 [get_ports update_speed]
 set_property IOSTANDARD LVCMOS18 [get_ports update_speed]
@@ -155,16 +156,16 @@ set_max_delay -from [get_ports update_speed] 4 -datapath_only
 
 # Ignore pause deserialiser as only present to prevent logic stripping
 set_false_path -from [get_ports pause_req*]
-set_false_path -from [get_cells pause_req* -filter {IS_SEQUENTIAL}]
-set_false_path -from [get_cells pause_val* -filter {IS_SEQUENTIAL}]
+#set_false_path -from [get_cells pause_req* -filter {IS_SEQUENTIAL}]
+#set_false_path -from [get_cells pause_val* -filter {IS_SEQUENTIAL}]
 
 
 ############################################################
 # Output Delay constraints
 ############################################################
 
-set_false_path -to [get_ports frame_error]
-set_false_path -to [get_ports frame_errorn]
+#set_false_path -to [get_ports frame_error]
+#set_false_path -to [get_ports frame_errorn]
 set_false_path -to [get_ports serial_response]
 set_false_path -to [get_ports tx_statistics_s]
 set_false_path -to [get_ports rx_statistics_s]

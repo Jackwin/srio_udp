@@ -35,7 +35,7 @@ reg [DATA_LENGTH_WIDTH-1:0]     data_len_r1, data_len_r2, data_len_reg;
 reg                             data_valid_r1, data_valid_r2, data_valid_p;
 reg [DATA_WIDTH-1:0]            data_in_r1, data_in_r2;
 reg [1:0]                       data_last_r;
-reg                             data_first_r1;
+//reg                             data_first_r1;
 wire                            data_tlast, data_tvalid;
 reg [DATA_WIDTH/8-1:0]          data_keep_r1, data_keep_r2;
 //Count the sent packets
@@ -46,9 +46,9 @@ reg [7:0]                       current_pack_length;
 
 // FIFO signals
 localparam MEM_DPTH = 2**RAM_ADDR_WIDTH;
-reg [DATA_WIDTH+4+8-1:0]        mem[MEM_DPTH-1:0];
-reg [DATA_WIDTH+4+8-1:0]        rd_data_reg, rd_data;
-wire [DATA_WIDTH+4+8-1:0]       wr_data;
+reg [DATA_WIDTH+3+8-1:0]        mem[MEM_DPTH-1:0];
+reg [DATA_WIDTH+3+8-1:0]        rd_data_reg, rd_data;
+wire [DATA_WIDTH+3+8-1:0]       wr_data;
 reg [RAM_ADDR_WIDTH:0]          wr_ptr_reg, wr_ptr_next, rd_ptr_reg, rd_ptr_next;
 reg                             rd_data_valid_next, rd_data_valid_reg;
 
@@ -94,10 +94,10 @@ always @(posedge clk or posedge reset) begin
         data_in_r2 <= 'h0;
         data_keep_r1 <= 'h0;
         data_keep_r2 <= 'h0;
-        data_first_r1 <= 1'b0;
+ //       data_first_r1 <= 1'b0;
     end
     else begin
-        data_first_r1 <= data_first_in;
+      //  data_first_r1 <= data_first_in;
         data_valid_r1 <= data_valid_in;
         data_valid_r2 <= data_valid_r1;
         data_valid_p <= data_valid_in & ~data_valid_r1;
@@ -120,7 +120,7 @@ assign wr_tail = (counter[DATA_LENGTH_WIDTH-3-1:5] == trans_256B_times_reg
 assign wr_tail_tlast = (counter[DATA_LENGTH_WIDTH-3-1:5] == trans_256B_times_reg)
                         && wr_pack_tlast;
 
-assign wr_data = !wr_tail ? {data_in_r1, data_keep_r1, data_first_r1, data_tlast,
+assign wr_data = !wr_tail ? {data_in_r1, data_keep_r1, data_tlast,
                 wr_pack_tfirst, wr_pack_tlast}
                 : {64'h0, 8'h0, 1'b0, wr_tail_tlast, 1'b0, wr_tail_tlast};
 assign counter_ena = data_tvalid || wr_tail;
@@ -376,14 +376,14 @@ always @(posedge clk) begin
     end
 end
 
-assign rd_data_tfirst = rd_data[3];
+//assign rd_data_tfirst = rd_data[3];
 assign rd_data_tlast = rd_data[2];
 assign rd_pack_tfirst  = rd_data[1];
 assign rd_pack_tlast = rd_data[0];
-assign rd_pack_tkeep = rd_data[11:4];
+assign rd_pack_tkeep = rd_data[10:3];
 
 //output
-assign output_tdata = rd_data[DATA_WIDTH+4+8-1:4+8];
+assign output_tdata = rd_data[DATA_WIDTH+3+8-1:3+8];
 assign output_tkeep = rd_pack_tkeep;
 //assign output_tlast = rd_pack_tlast && rd_data_tlast && rd_data_valid_reg;
 assign output_tlast = rd_pack_tlast && rd_data_valid_reg;

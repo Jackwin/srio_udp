@@ -275,6 +275,19 @@ always @(posedge clk) begin
             end
         end
    end
+   wire [0:0] reply_en_r2_ila;
+   wire [0:0] arp_tlast_ila;
+   wire [0:0] arp_tvalid_ila;
 
+   assign reply_en_r2_ila[0] = reply_en_r2;
+   assign arp_tvalid_ila[0] = arp_tvalid_out;
+   assign arp_tlast_ila[0] = arp_tlast_out;
+ila_rx ila_arp_send (
+          .clk(clk), // input wire clk
+          .probe0(arp_tdata_out[7:0]), // input wire [7:0]  probe0
+          .probe1(reply_en_r2_ila), // input wire [0:0]  probe1
+          .probe2(arp_tvalid_ila), // input wire [0:0]  probe2
+          .probe3(arp_tlast_ila) // input wire [0:0]  probe3
+     );
 endmodule
 

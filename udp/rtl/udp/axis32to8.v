@@ -39,7 +39,7 @@ assign fifo_din1 = {axis_tdata_in[15:8], axis_tkeep_in[1], axis_tvalid_in, fifo_
 assign fifo_din0 = {axis_tdata_in[7:0], axis_tkeep_in[0], axis_tvalid_in, fifo_din0_last};
 assign fifo_din = {fifo_din3, fifo_din2, fifo_din1, fifo_din0};
 
-always @(posedge clk_8 or negedge reset_8) begin
+always @(posedge clk_8 or posedge reset_8) begin
     if (reset_8) begin
         fifo_dout_valid <= 1'b0;
     end

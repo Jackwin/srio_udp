@@ -156,7 +156,7 @@ srio_example_top_srio_gen2_0 srio_example_top_srio_gen2_0_i
 (
     .sys_clkp           (srio_refclkp),
     .sys_clkn           (srio_refclkn),
-    .sys_rst_n          (~glbl_rst),
+    .sys_rst            (glbl_rst),
     .srio_rxn0          (srio_rxn0),
     .srio_rxp0          (srio_rxp0),
     .srio_rxn1          (srio_rxn1),
@@ -222,6 +222,28 @@ udp2srio_interface udp2srio_interface_i
     .srio_keep_out  (srio_user_tkeep),
     .srio_last_out  (srio_user_tlast)
 );
+
+
+wire [0:0]      udpdata_tvalid_ila;
+wire [0:0]      udpdata_tfirst_ila;
+wire [0:0]      udpdata_tlast_ila;
+wire [0:0]      udpdata_tready_ila;
+assign udpdata_tvalid_ila[0] = udpdata_tvalid;
+assign udpdata_tfirst_ila[0] = udpdata_tfirst;
+assign udpdata_tlast_ila[0] = udpdata_tlast;
+assign udpdata_tready_ila[0] = udpdata_tready;
+
+ila_udp_top ila_udp_top_i (
+    .clk(clk_udp), // input wire clk
+    .probe0(udpdata_tdata), // input wire [31:0]  probe0
+    .probe1(udpdata_tvalid_ila), // input wire [0:0]  probe1
+    .probe2(udpdata_tfirst_ila), // input wire [0:0]  probe2
+    .probe3(udpdata_tkeep), // input wire [3:0]  probe3
+    .probe4(udpdata_tlast), // input wire [0:0]  probe4
+    .probe5(udpdata_length[14:0]), // input wire [14:0]  probe5
+    .probe6(udpdata_tready_ila) // input wire [0:0]  probe6
+);
+
 
 
 

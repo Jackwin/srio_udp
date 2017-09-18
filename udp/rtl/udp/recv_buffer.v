@@ -19,7 +19,10 @@
 `define ARP_PRTC 16'h0806
 `define IP_PRTC 16'h0800
 `define RARP_PRTC 16'h8035
-module recv_buffer
+module recv_buffer # (
+parameter DEBUG  = 0
+)
+
 (
     input           clk,
     input           reset,
@@ -284,7 +287,7 @@ generate
         //assign arp_reply_ila[0] = arp_reply_r;
 
 
-        ila_recv_buf ila_recv_top (
+        ila_recv ila_recv_top (
                 .clk(clk), // input wire clk
                 .probe0(arp_axis_tdata_out), // input wire [7:0]  probe0
                 .probe1(arp_tvalid_ila), // input wire [0:0]  probe1

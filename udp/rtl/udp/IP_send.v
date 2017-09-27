@@ -171,7 +171,7 @@ always @(posedge clk or posedge reset) begin
     end
     else if (valid_r && ready_in) begin
          axis_tvalid_out <= 1'b0;
-         length_valid_out <= 1'b0;
+         //length_valid_out <= 1'b0;
          axis_tkeep_out <= 'h0;
          axis_tlast_out <= 1'b0;
          case (cnt)
@@ -187,11 +187,11 @@ always @(posedge clk or posedge reset) begin
                     ip_addr_reg  <= ip_addr;
                     if (udp_valid_in) begin
                         total_length <= udp_data_length_in + (`IHL << 2);
-                        length_valid_out <= 1'b1;
+                        //length_valid_out <= 1'b1;
                     end
                     else if (tcp_valid_in )begin
                         total_length <= tcp_data_length_in + (`IHL << 2);
-                        length_valid_out <= 1'b1;
+                        //length_valid_out <= 1'b1;
                     end
                     else begin
                         total_length <= 'h0;

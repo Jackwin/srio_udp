@@ -32,10 +32,11 @@ reg             fifo_dout_valid;
 reg [13:0]      byte_cnt;
 reg [7:0]       data_buf[0:3];
 reg [13:0]      udp_length;
+reg             udp_length_valid;
 wire [31:0]     data_4bytes;
 wire [15:0]     data_2bytes;
 
-reg [15:0]      udp_length_buf0, udp_length_buf1, udp_length_buf2;
+(* ASYNC_REG = "TRUE" *) reg [15:0]      udp_length_buf0, udp_length_buf1, udp_length_buf2;
 integer         k;
 
 always @(posedge clk) begin

@@ -52,7 +52,7 @@ reg                     data_last;
 reg                     data_valid;
 reg                     data_first;
 
-reg [15:0]              length_buf1, length_buf0;
+(* ASYNC_REG = "TRUE" *) reg [15:0]       length_buf2, length_buf1, length_buf0;
 
 assign data_2words = {data_buf, udp_data_in};
 assign keep_2words = {keep_buf, udp_keep_in};
@@ -70,16 +70,17 @@ assign srio_first_out = fifo_dout[0];
 assign nwr_req_out = srio_first_out;
 always @(posedge clk_srio) begin
     if (reset_srio) begin
-        {length_buf1, length_buf0} <= 'h0;
+        {length_buf2, length_buf1, length_buf0} <= 'h0;
         fifo_dout_valid <= 1'b0;
     end
     else begin
         fifo_dout_valid <= fifo_rd_ena;
         length_buf0 <= udp_length_in;
         length_buf1 <= length_buf0;
+        length_buf2 <= length_buf1;
     end
 end
-assign srio_length_out = length_buf1;
+assign srio_length_out = length_buf2;
 
 always @(posedge clk_udp) begin
     if (reset_udp) begin

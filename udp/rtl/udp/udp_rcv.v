@@ -173,8 +173,11 @@ module cmd_parse (
     input [7:0]     data_in,
     input           valid_in,
     input           last_in,
-
-
+/*
+    output          fpga_self_check_out,
+    output          srio_self_check_out,
+    output          loopback_self_check_out,
+    output          lvds_ctrl_out,*/
     output [7:0]    cmd_out,
     output          cmd_valid_out
 
@@ -250,6 +253,22 @@ always @(posedge clk) begin
             end
         endcase // cnt
     end
+/*
+always @(*) begin
+    fpga_self_check_out = 1'b0;
+    case (cmd_data)
+        8'h01: begin
+            if (cmd_valid) begin
+                fpga_self_check_out = 1'b1;
+            end
+            else begin
+                fpga_self_check_out = 1'b0;
+            end
+
+        default : ;
+    endcase
+end
+*/
 end
 
 assign cmd_out = cmd_data;

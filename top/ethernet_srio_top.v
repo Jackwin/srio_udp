@@ -4,8 +4,8 @@ module ethernet_srio_top (
 
     // Ethernet interface
     // asynchronous reset
-    input           glbl_rst,
-    output          phy_resetn,
+    input           sys_rst,
+/*    output          phy_resetn,
 
     //200MHz input clock
     input           clk_in_p,
@@ -45,7 +45,7 @@ module ethernet_srio_top (
     input           chk_tx_data,
     input           reset_error,
 
-
+*/
     //SRIO interface
     // Clocks and Resets
     input            srio_refclkp,              // MMCM reference clock
@@ -103,11 +103,11 @@ wire                nwr_done_out;
 wire [7:0]          cmd_data;
 wire                cmd_valid;
 
-
+/*
 tri_mode_ethernet_mac_0_example_design tri_mode_ethernet_mac_0_example_design_i
 (
     //Physical Interface
-    .glbl_rst            (glbl_rst),
+    .glbl_rst            (sys_rst),
     .phy_resetn          (phy_resetn),
     .clk_in_p            (clk_in_p),
     .clk_in_n            (clk_in_n),
@@ -151,12 +151,12 @@ tri_mode_ethernet_mac_0_example_design tri_mode_ethernet_mac_0_example_design_i
     .cmd_valid_out       (cmd_valid)
 );
 
-
+*/
 srio_example_top_srio_gen2_0 srio_example_top_srio_gen2_0_i
 (
     .sys_clkp           (srio_refclkp),
     .sys_clkn           (srio_refclkn),
-    .sys_rst            (glbl_rst),
+    .sys_rst            (sys_rst),
     .srio_rxn0          (srio_rxn0),
     .srio_rxp0          (srio_rxp0),
     .srio_rxn1          (srio_rxn1),
@@ -198,7 +198,7 @@ srio_example_top_srio_gen2_0 srio_example_top_srio_gen2_0_i
     .ack_o()
 
 );
-
+/*
 udp2srio_interface udp2srio_interface_i
 (
     .clk_udp         (clk_udp),
@@ -222,8 +222,8 @@ udp2srio_interface udp2srio_interface_i
     .srio_keep_out  (srio_user_tkeep),
     .srio_last_out  (srio_user_tlast)
 );
-
-
+*/
+/*
 wire [0:0]      udpdata_tvalid_ila;
 wire [0:0]      udpdata_tfirst_ila;
 wire [0:0]      udpdata_tlast_ila;
@@ -243,7 +243,7 @@ ila_udp_top ila_udp_top_i (
     .probe5(udpdata_length[14:0]), // input wire [14:0]  probe5
     .probe6(udpdata_tready_ila) // input wire [0:0]  probe6
 );
-
+*/
 
 
 

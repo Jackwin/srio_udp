@@ -583,7 +583,7 @@ assign srio_led[1] = ~link_initialized;
 
         .nwr_ready_o(nwr_ready_out),
         .nwr_busy_o(nwr_busy_out),
-        .nwr_done_ack_o(nwr_done_out),
+        .nwr_ack_done_o(nwr_done_out),
 
         .user_tready_o(user_tready),
         .user_addr(user_taddr_in),

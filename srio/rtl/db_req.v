@@ -631,8 +631,8 @@ fifo_75x512 user_data_fifo (
   .rd_en(fifo_rd_en),            // input wire rd_en
   .dout(fifo_dout),              // output wire [65 : 0] dout
   .full(fifo_full),              // output wire full
-  .empty(fifo_empty),            // output wire empty
-  .data_count(fifo_data_cnt)  // output wire [8 : 0] data_count
+  .empty(fifo_empty)            // output wire empty
+  //data_count(fifo_data_cnt)  // output wire [8 : 0] data_count
 );
 generate if (!SIM) begin: ila_req_gen
 

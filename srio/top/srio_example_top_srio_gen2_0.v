@@ -338,8 +338,8 @@ module srio_example_top_srio_gen2_0 #(
 //Added by Chunjie
   //wire sys_rst;
 
-   wire [15:0] src_id = 16'h01;
-  wire [15:0] des_id = 16'hf0;
+   wire [15:0] src_id = 16'hf0;
+  wire [15:0] des_id = 16'h01;
 
   wire              rapidIO_ready;
   reg [2:0]         nwr_done_r;

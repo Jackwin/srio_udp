@@ -5,7 +5,7 @@ module ethernet_srio_top (
     // Ethernet interface
     // asynchronous reset
     input           sys_rst,
-/*    output          phy_resetn,
+    output          phy_resetn,
 
     //200MHz input clock
     input           clk_in_p,
@@ -45,7 +45,7 @@ module ethernet_srio_top (
     input           chk_tx_data,
     input           reset_error,
 
-*/
+
     //SRIO interface
     // Clocks and Resets
     input            srio_refclkp,              // MMCM reference clock
@@ -103,7 +103,7 @@ wire                nwr_done_out;
 wire [7:0]          cmd_data;
 wire                cmd_valid;
 
-/*
+
 tri_mode_ethernet_mac_0_example_design tri_mode_ethernet_mac_0_example_design_i
 (
     //Physical Interface
@@ -151,7 +151,8 @@ tri_mode_ethernet_mac_0_example_design tri_mode_ethernet_mac_0_example_design_i
     .cmd_valid_out       (cmd_valid)
 );
 
-*/
+
+
 srio_example_top_srio_gen2_0 srio_example_top_srio_gen2_0_i
 (
     .sys_clkp           (srio_refclkp),
@@ -198,6 +199,7 @@ srio_example_top_srio_gen2_0 srio_example_top_srio_gen2_0_i
     .ack_o()
 
 );
+
 /*
 udp2srio_interface udp2srio_interface_i
 (

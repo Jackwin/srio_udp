@@ -67,7 +67,7 @@ localparam [3:0] TNWR   = 4'h4;
 
 localparam [63:0] db_instr = {
 // srcTID  FTYPE  R    R      prio  CRF    R     Info      R
-    {8'h00, DOORB, 4'h0, 1'b0, 2'h1, 1'b0, 12'b0, 16'h0101, 16'h0}
+    {8'h00, DOORB, 4'h0, 1'b0, 2'h1, 1'b0, 12'b0, 16'h0001, 16'h0}
 };
 /*localparam [63:0] nwr_instr = {
     srcTID, nwr, TNWR, 1'b0, 2'h1, 1'b0, (size-1), 2'h0, addr}
@@ -84,7 +84,7 @@ localparam [2:0] WAIT_TARGET_ACK_s = 3'd5;
 reg [2:0] state;
 
 reg  [15:0] log_rst_shift;
-wire        log_rst;
+//wire        log_rst;
 
 // nwr signals
 wire [63:0] nwr_instr;
@@ -381,7 +381,7 @@ always @(posedge log_clk) begin : proc_timer
          over_time <= 1'b0;
     end
     else if (timer_ena) begin
-        if (timer_cnt == 10'hffff) begin
+        if (timer_cnt == 16'hffff) begin
             over_time <= 1'b1;
         end
         else begin
@@ -539,7 +539,7 @@ assign current_resp_addr  = iresp_tdata_in[33:0];
 assign current_resp_db_info = iresp_tdata_in[31:16];
 assign current_resp_srcid = iresp_tuser_in[31:16];
 
-assign get_a_response =  (current_resp_ftype == DOORB && current_resp_srcid == 8'hf0 && iresp_tvalid_in) ? 1'b1: 1'b0;
+assign get_a_response =  (current_resp_ftype == DOORB && current_resp_srcid == 8'h01 && iresp_tvalid_in) ? 1'b1: 1'b0;
 // Indicate the requested endpoint is ready
 assign target_ready = (get_a_response && current_resp_db_info == 16'h0100) ? 1'b1: 1'b0;
 assign target_busy =  (get_a_response && current_resp_db_info == 16'h01ff) ? 1'b1 : 1'b0;

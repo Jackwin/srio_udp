@@ -20,7 +20,7 @@
 `define IP_PRTC 16'h0800
 `define RARP_PRTC 16'h8035
 module recv_buffer # (
-parameter DEBUG  = 1
+parameter DEBUG  = 0
 )
 
 (

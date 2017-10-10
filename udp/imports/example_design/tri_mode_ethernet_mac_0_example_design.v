@@ -910,7 +910,7 @@ assign rx_axis_fifo_tvalid_ila[0] = rx_axis_fifo_tvalid;
 assign rx_axis_fifo_tlast_ila[0] = rx_axis_fifo_tlast;
 assign rx_axis_fifo_tready_ila[0] = rx_axis_fifo_tready;
 assign tx_data_gen = tx_data_gen_vio[0];
-
+/*
 ila_tx tx_ila (
      .clk(tx_fifo_clock),
      .probe0(mmcm_locked_ila),
@@ -930,7 +930,7 @@ ila_rx ila_rx_i (
           .probe2(rx_axis_fifo_tlast_ila), // input wire [0:0]  probe2
           .probe3(rx_axis_fifo_tready_ila) // input wire [0:0]  probe3
      );
-/*
+
 vio_tx_gen vio_tx_gen_i (
   .clk(tx_fifo_clock),                     // input wire clk
   .probe_out0(tx_data_gen_vio)  // output wire [0 : 0] probe_out0

@@ -1,6 +1,9 @@
 `timescale 1ns/1ps
 
-module axis_8to32 (
+module axis_8to32 # (
+    parameter DEBUG = 0
+)
+(
     input           clk_8,
     input           reset_8,
 
@@ -55,7 +58,7 @@ always @(posedge clk_32) begin
     end
     else begin
         fifo_dout_valid <= fifo_rd_ena;
-        if (axis_tvalid_out) begin
+        if (axis_tvalid_out && !axis_tlast_out) begin
             axis_tfirst_out <= 1'b0;
         end
         else if (axis_tlast_out) begin
@@ -168,16 +171,21 @@ fifo_38inx512 fifo_38inx512_i (
   .full(fifo_full),      // output wire full
   .empty(fifo_empty)    // output wire empty
 );
-wire [0:0]      fifo_wr_ena_ila;
-wire [0:0]      fifo_full_ila;
-assign fifo_wr_ena_ila[0] = fifo_wr_ena;
-assign fifo_full_ila[0] = fifo_full;
-ila_axis8to32 ila_axis8to32_i
-(
-    .clk (fifo_wr_clk),
-    .probe0(fifo_wr_ena_ila),
-    .probe1(fifo_full_ila)
-);
+generate
+    if (DEBUG == 1) begin
+        wire [0:0]      fifo_wr_ena_ila;
+        wire [0:0]      fifo_full_ila;
+        assign fifo_wr_ena_ila[0] = fifo_wr_ena;
+        assign fifo_full_ila[0] = fifo_full;
+        ila_axis8to32 ila_axis8to32_i
+        (
+            .clk (fifo_wr_clk),
+            .probe0(fifo_wr_ena_ila),
+            .probe1(fifo_full_ila)
+        );
+    end
+endgenerate
+
 
 
 endmodule

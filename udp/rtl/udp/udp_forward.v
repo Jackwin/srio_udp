@@ -77,7 +77,7 @@ always @(posedge clk) begin
             data_buf[0] <= udp_axis_tdata_in;
         end
 
-        if (byte_cnt == 'd3 && udp_axis_tvalid_in) begin
+        if (byte_cnt == 'd4 && udp_axis_tvalid_in) begin
             udp_length <= {1'b0, data_2bytes[13:0]};
         end
         else if (udp_axis_tlast_in) begin

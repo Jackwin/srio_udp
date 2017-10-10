@@ -3,8 +3,9 @@ module udp2srio_interface #
     (
     parameter DATA_WIDTH = 64,
     parameter DATA_LEN_WIDTH = 20,
-    parameter RAM_ADDR_WIDTH = 10
-        )
+    parameter RAM_ADDR_WIDTH = 10,
+    parameter DEBUG  = 0
+    )
     (
     input                   clk_udp,    // Clock
     input                   reset_udp,
@@ -157,6 +158,35 @@ fifo_75x256 fifo_75x256_i (
     .empty(fifo_empty)
 
     );
+
+generate
+    if (DEBUG == 1) begin
+
+        wire [0:0] nwr_req_ila;
+        wire [0:0] srio_ready_ila;
+        wire [0:0] srio_valid_ila;
+        wire [0:0] srio_first_ila;
+        wire [0:0] srio_last_ila;
+        assign srio_ready_ila[0] = srio_ready_in;
+        assign srio_valid_ila[0] = srio_valid_out;
+        assign nwr_req_ila[0] = nwr_req_out;
+        assign srio_first_ila[0] = srio_first_out;
+        assign srio_last_ila[0] = srio_last_out;
+        ila_udp2srio ila_udp2srio_i
+         (
+            .clk(clk_srio), // input wire clk
+            .probe0(srio_ready_ila), // input wire [0:0]  probe0
+            .probe1(srio_valid_ila), // input wire [0:0]  probe1
+            .probe2(nwr_req_ila), // input wire [0:0]  probe2
+            .probe3(srio_first_ila), // input wire [0:0]  probe3
+            .probe4(srio_last_ila), // input wire [0:0]  probe4
+            .probe5(srio_keep_out), // input wire [7:0]  probe5
+            .probe6(srio_length_out), // input wire [15:0]  probe6
+            .probe7(srio_data_out) // input wire [63:0]  probe7
+        );
+        end
+
+endgenerate
 
 
 endmodule

@@ -39,6 +39,7 @@ assign data_4bytes = {data_buf2, data_buf1, data_buf0, axis_tdata_in};
 assign fifo_din = {data_4bytes, data_keep, data_last, data_valid};
 assign fifo_wr_ena = data_valid;
 assign axis_tready_out = ~fifo_full;
+//assign axis_tready_out = 1'b1;
 assign fifo_rd_ena = (axis_tready_in && ~fifo_empty) ? 1'b1 : 1'b0;
 
 assign axis_tdata_out = fifo_dout[37:6];
@@ -166,6 +167,16 @@ fifo_38inx512 fifo_38inx512_i (
   .dout(fifo_dout),      // output wire [37 : 0] dout
   .full(fifo_full),      // output wire full
   .empty(fifo_empty)    // output wire empty
+);
+wire [0:0]      fifo_wr_ena_ila;
+wire [0:0]      fifo_full_ila;
+assign fifo_wr_ena_ila[0] = fifo_wr_ena;
+assign fifo_full_ila[0] = fifo_full;
+ila_axis8to32 ila_axis8to32_i
+(
+    .clk (fifo_wr_clk),
+    .probe0(fifo_wr_ena_ila),
+    .probe1(fifo_full_ila)
 );
 
 

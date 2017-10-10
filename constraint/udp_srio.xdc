@@ -136,7 +136,7 @@ set_property IOSTANDARD LVCMOS18 [get_ports linkup]
 # Ethernet      Constraints                              #
 ############################################################
 # Transmitter clock period constraints: please do not relax
-create_clock -name clkout0 -period 8.000 [get_ports gtrefclk_n]
+create_clock -name ethernet_refclk -period 8.000 [get_ports gtrefclk_n]
 
 
 

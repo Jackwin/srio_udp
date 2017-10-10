@@ -20,7 +20,7 @@
 `define IP_PRTC 16'h0800
 `define RARP_PRTC 16'h8035
 module recv_buffer # (
-parameter DEBUG  = 0
+parameter DEBUG  = 1
 )
 
 (
@@ -62,6 +62,7 @@ reg [1:0]            recv_state;
 reg [7:0]           data_buf4, data_buf3, data_buf2, data_buf1, data_buf0;
 wire [47:0]       data_6bytes;
 wire [15:0]       data_2bytes;
+wire [31:0]       data_4bytes;
 
 
 reg [15:0]           ip_length, byte_cnt;
@@ -107,7 +108,7 @@ always @(posedge clk) begin
 end
 assign data_6bytes = {data_buf4, data_buf3, data_buf2,
                      data_buf1, data_buf0, axis_tdata_in};
-
+assign data_4bytes = {data_buf2, data_buf1, data_buf0, axis_tdata_in};
 assign data_2bytes = {data_buf0, axis_tdata_in};
 
 always @(posedge clk) begin
@@ -193,7 +194,8 @@ always @(posedge clk) begin
             end
             IP_RECV_HEADER_s: begin
                 timer_ena <= 1'b1;
-                if(byte_cnt == (header_len_reg - 1'd1) && header_len_reg != 'h0) begin
+                // Only support 20-byte IP_header
+                if(byte_cnt == (header_len_reg - 1'd1) && header_len_reg != 'h0 && data_4bytes == 32'hc0a80006) begin
                     state <= IP_RECV_s;
                     timer_reset <= 1'b1;
                 end
@@ -281,11 +283,21 @@ generate
         wire [0:0] arp_tlast_ila;
         wire [0:0] arp_reply_ila;
         wire [0:0] axis_tvalid_ila;
+
+        wire [0:0] ip_axis_tvalid_ila;
+        wire [0:0] ip_axis_tlast_ila;
+        wire [0:0] ip_axis_tready_ila;
+
+
         assign arp_tvalid_ila[0] = arp_axis_tvalid_out;
         assign arp_tlast_ila[0] = arp_axis_tlast_out;
         assign axis_tvalid_ila[0] = axis_tvalid_in;
-        //assign arp_reply_ila[0] = arp_reply_r;
 
+        assign ip_axis_tvalid_ila[0] = ip_axis_tvalid_out;
+        assign ip_axis_tlast_ila[0] = ip_axis_tlast_out;
+        assign ip_axis_tready_ila[0] = ip_axis_tready_in;
+
+        //assign arp_reply_ila[0] = arp_reply_r;
 
         ila_recv ila_recv_top (
                 .clk(clk), // input wire clk
@@ -296,7 +308,11 @@ generate
                 .probe4(state),
                 .probe5(byte_cnt),
                 .probe6(data_6bytes),
-                .probe7(data_2bytes)
+                .probe7(data_2bytes),
+                .probe8(ip_axis_tvalid_ila),
+                .probe9(ip_axis_tlast_ila),
+                .probe10(ip_axis_tready_ila),
+                .probe11(ip_axis_tdata_out)
             );
     end
 endgenerate

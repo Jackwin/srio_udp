@@ -7,9 +7,8 @@ Current implementation does not utilize checksum.
 
 **************/
 
-
 module udp_rcv #
-    ( parameter DEBUG = 0)
+    ( parameter DEBUG = 1)
     (
     input               clk,
     input               reset,

@@ -200,7 +200,7 @@ srio_example_top_srio_gen2_0 srio_example_top_srio_gen2_0_i
 
 );
 
-/*
+
 udp2srio_interface udp2srio_interface_i
 (
     .clk_udp         (clk_udp),
@@ -224,8 +224,8 @@ udp2srio_interface udp2srio_interface_i
     .srio_keep_out  (srio_user_tkeep),
     .srio_last_out  (srio_user_tlast)
 );
-*/
-/*
+
+
 wire [0:0]      udpdata_tvalid_ila;
 wire [0:0]      udpdata_tfirst_ila;
 wire [0:0]      udpdata_tlast_ila;
@@ -245,9 +245,6 @@ ila_udp_top ila_udp_top_i (
     .probe5(udpdata_length[14:0]), // input wire [14:0]  probe5
     .probe6(udpdata_tready_ila) // input wire [0:0]  probe6
 );
-*/
-
-
 
 
 endmodule

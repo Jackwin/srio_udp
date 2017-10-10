@@ -922,7 +922,7 @@ ila_tx tx_ila (
   .probe6(tx_axis_fifo_tvalid),
   .probe7(tx_axis_fifo_tlast)
      );
-/*
+
 ila_rx ila_rx_i (
           .clk(tx_fifo_clock), // input wire clk
           .probe0(rx_axis_fifo_tdata), // input wire [7:0]  probe0
@@ -930,7 +930,7 @@ ila_rx ila_rx_i (
           .probe2(rx_axis_fifo_tlast_ila), // input wire [0:0]  probe2
           .probe3(rx_axis_fifo_tready_ila) // input wire [0:0]  probe3
      );
-
+/*
 vio_tx_gen vio_tx_gen_i (
   .clk(tx_fifo_clock),                     // input wire clk
   .probe_out0(tx_data_gen_vio)  // output wire [0 : 0] probe_out0

@@ -3,7 +3,9 @@
 Return the received UPD packets without any further processing.
 */
 
-module udp_forward (
+module udp_forward #
+    (parameter DEBUG = 1)
+    (
     input               clk,
     input               reset,
 
@@ -38,6 +40,12 @@ wire [15:0]     data_2bytes;
 
 (* ASYNC_REG = "TRUE" *) reg [15:0]      udp_length_buf0, udp_length_buf1, udp_length_buf2;
 integer         k;
+
+//Debug signals
+wire [0:0]      udp_axis_tvalid_ila;
+wire [0:0]      udp_axis_tfirst_ila;
+wire [0:0]      udp_axis_tready_ila;
+wire [0:0]      udp_axis_tlast_ila;
 
 always @(posedge clk) begin
     if (reset) begin
@@ -115,6 +123,25 @@ axis_8to32 axis8to32_i (
     .axis_tkeep_out (udp_axis_tkeep_out),
     .axis_tlast_out(udp_axis_tlast_out)
 );
+
+generate
+    if (DEBUG == 1) begin
+        assign udp_axis_tvalid_ila[0] = udp_axis_tvalid_out;
+        assign udp_axis_tlast_ila[0] = udp_axis_tlast_out;
+        assign udp_axis_tready_ila[0] = udp_axis_tready_in;
+        assign udp_axis_tfirst_ila[0] = udp_axis_tfirst_out;
+        ila_udp_forward ila_udp_forward_i (
+                .clk(clk_32), // input wire clk
+                .probe0(udp_axis_tvalid_ila),
+                .probe1(udp_axis_tlast_ila),
+                .probe2(udp_axis_tready_ila),
+                .probe3(udp_axis_tfirst_ila),
+                .probe4(udp_axis_tdata_out),
+                .probe5(udp_axis_tkeep_out),
+                .probe6(udp_length_buf2)
+            );
+    end
+endgenerate
 
 /*
 // FIFO should always keep NOT full to ensure buffering the input UDP stream.

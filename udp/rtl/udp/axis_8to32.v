@@ -58,11 +58,11 @@ always @(posedge clk_32) begin
     end
     else begin
         fifo_dout_valid <= fifo_rd_ena;
-        if (axis_tvalid_out && !axis_tlast_out) begin
-            axis_tfirst_out <= 1'b0;
-        end
-        else if (axis_tlast_out) begin
+        if (axis_tlast_out) begin
             axis_tfirst_out <= 1'b1;
+        end
+        else if (axis_tvalid_out) begin
+            axis_tfirst_out <= 1'b0;
         end
     end
 end

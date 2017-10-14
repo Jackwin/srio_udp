@@ -8,7 +8,7 @@ Current implementation does not utilize checksum.
 **************/
 
 module udp_rcv #
-    ( parameter DEBUG = 1)
+    ( parameter DEBUG = 0)
     (
     input               clk,
     input               reset,
@@ -22,6 +22,7 @@ module udp_rcv #
     output reg [7:0]    udpdata_tdata_out,
     output reg          udpdata_tvalid_out,
     output reg          udpdata_tlast_out,
+    output wire [15:0]  udpdata_length_out,
     output reg [15:0]   dest_port_out,
 
     output [7:0]        cmd_out,
@@ -29,6 +30,7 @@ module udp_rcv #
 );
 localparam              BUF_DEPTH = 6;
 reg [4:0]               cnt;
+reg [10:0]              byte_cnt;
 reg [15:0]              source_port, length, checksum;
 reg                     start_data;
 wire [15:0]             data_length;
@@ -45,7 +47,7 @@ wire [0:0]              udp_tready_ila;
 //assign udp_axis_tready_out = 1'b1;
 assign udp_axis_tready_out = udpdata_tready_in;
 
-assign data_length = (length == 16'b0) ? 16'b0 : (length >> 2) - 2; //number of total bytes divided by 4 makes the number of total words, and subtract 2 words for the header
+assign udpdata_length_out = (length == 16'b0) ? 16'b0 : (length - 8); //number of total bytes divided by 4 makes the number of total words, and subtract 2 words for the header
 
 always @(posedge clk) begin
     if (reset) begin
@@ -73,6 +75,7 @@ assign data_2bytes = {data_buf[0], udp_axis_tdata_in};
 always @(posedge clk) begin
     if (reset) begin
         cnt <= 'h0;
+        byte_cnt <= 'h0;
         udpdata_tvalid_out <= 1'b0;
         udpdata_tdata_out <= 7'b0;
         udpdata_tlast_out <= 1'b0;
@@ -83,6 +86,7 @@ always @(posedge clk) begin
     end
     else begin
         if (udp_axis_tvalid_in && udpdata_tready_in) begin
+            byte_cnt <= byte_cnt + 'h1;
             case (cnt)
                 0,2,4,6: begin
                     cnt <= cnt + 4'b1;
@@ -124,15 +128,19 @@ always @(posedge clk) begin
             endcase // cnt
         end
         else begin
+            byte_cnt <= byte_cnt;
             cnt <= cnt;
             udpdata_tdata_out <= udp_axis_tdata_in;
             udpdata_tvalid_out <= 1'b0;
+            //udpdata_tlast_out <= (length < 49) ? (byte_cnt == (length - 1)) : udp_axis_tlast_in;
             udpdata_tlast_out <= udp_axis_tlast_in;
             source_port <= source_port;
             dest_port_out <= dest_port_out;
         end
-        if (udp_axis_tlast_in) begin
+        //if (udp_axis_tlast_in) begin
+        if (udpdata_tlast_out) begin
             cnt <= 'h0;
+            byte_cnt <= 'h0;
         end
     end
 end

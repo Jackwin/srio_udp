@@ -4,7 +4,7 @@ module udp2srio_interface #
     parameter DATA_WIDTH = 64,
     parameter DATA_LEN_WIDTH = 20,
     parameter RAM_ADDR_WIDTH = 10,
-    parameter DEBUG  = 0
+    parameter DEBUG  = 1
     )
     (
     input                   clk_udp,    // Clock
@@ -67,7 +67,7 @@ assign srio_valid_out = fifo_dout_valid;
 assign {srio_keep_out, srio_last_out} = fifo_dout_valid ? fifo_dout[10:2] : 'h0;
 //assign {srio_keep_out, srio_last_out, srio_valid_out, srio_first_out} = fifo_dout_valid ? fifo_dout[10:0]
 //                                        : {srio_keep_out, srio_last_out, srio_valid_out,srio_first_out};
-assign srio_first_out = fifo_dout[0];
+assign srio_first_out = fifo_dout_valid ? fifo_dout[0] : 'h0;
 assign nwr_req_out = srio_first_out;
 always @(posedge clk_srio) begin
     if (reset_srio) begin

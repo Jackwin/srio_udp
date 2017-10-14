@@ -12,6 +12,7 @@ module udp_forward #
     input [7:0]         udp_axis_tdata_in,
     input               udp_axis_tvalid_in,
     input               udp_axis_tlast_in,
+    input [15:0]        udp_axis_tlength_in,
     output              udp_axis_tready_out,
 
     input               clk_32,
@@ -64,7 +65,7 @@ end
 
 always @(posedge clk) begin
     if (reset) begin
-        udp_length <= 'h0;
+//        udp_length <= 'h0;
         for (k = 0; k < 4; k = k + 1) begin
             data_buf[k] <= 'h0;
         end
@@ -76,17 +77,17 @@ always @(posedge clk) begin
             data_buf[1] <= data_buf[0];
             data_buf[0] <= udp_axis_tdata_in;
         end
-
-        if (byte_cnt == 'd4 && udp_axis_tvalid_in) begin
-            udp_length <= {1'b0, data_2bytes[13:0]};
-        end
-        else if (udp_axis_tlast_in) begin
+/*
+        if (udp_axis_tlast_in) begin
             udp_length <= 'h0;
+        end
+        else if (byte_cnt == 'd5 && udp_axis_tvalid_in) begin
+            udp_length <= data_2bytes;
         end
         else begin
             udp_length <= udp_length;
         end
-
+*/
     end
 end
 assign data_4bytes = {data_buf[2], data_buf[1], data_buf[0], udp_axis_tdata_in};
@@ -97,9 +98,10 @@ always @(posedge clk_32) begin
     if (reset_32) begin
         udp_length_buf0 <= 'h0;
         udp_length_buf1 <= 'h0;
+        udp_length_buf2 <= 'h0;
     end
     else begin
-        udp_length_buf0 <= udp_length - 1'd1;
+        udp_length_buf0 <= udp_axis_tlength_in - 1'd1;
         udp_length_buf1 <= udp_length_buf0;
         udp_length_buf2 <= udp_length_buf1;
     end

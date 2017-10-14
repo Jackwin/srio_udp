@@ -70,6 +70,7 @@ wire                udpdata_tready;
 wire [7:0]          udpdata_tdata;
 wire                udpdata_tvalid;
 wire                udpdata_tlast;
+wire [15:0]         udpdata_length;
 
 wire [7:0]          tcp_data;
 wire                tcp_valid;
@@ -108,6 +109,7 @@ udp_rcv udp_rcv_module
     .udpdata_tdata_out  (udpdata_tdata),
     .udpdata_tvalid_out (udpdata_tvalid),
     .udpdata_tlast_out  (udpdata_tlast),
+    .udpdata_length_out (udpdata_length),
     .dest_port_out      (),
     .cmd_out            (cmd_out),
     .cmd_valid_out      (cmd_valid_out)
@@ -136,6 +138,7 @@ udp_forward udp_forward_module
     .udp_axis_tdata_in  (udpdata_tdata),
     .udp_axis_tvalid_in (udpdata_tvalid),
     .udp_axis_tlast_in  (udpdata_tlast),
+    .udp_axis_tlength_in (udpdata_length),
     .udp_axis_tready_out(udpdata_tready),
 
     .clk_32             (clk_32),

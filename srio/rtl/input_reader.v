@@ -155,7 +155,9 @@ always @(posedge clk) begin
             pack_trans_count <= trans_256B_times;
         end
         else if (output_tlast) begin
-            pack_trans_count <= pack_trans_count - 'h1;
+            if (pack_trans_count != 'h0) begin
+                pack_trans_count <= pack_trans_count - 'h1;
+            end
         end
         else if (output_done) begin
             pack_trans_count <= 'h0;
@@ -446,6 +448,46 @@ task transLengthComp;
     end
 endtask
 
+
+wire [0:0]  output_tready_ila;
+wire [0:0]  output_tvalid_ila;
+wire [0:0]  output_tlast_ila;
+wire [0:0]  output_tfirst_ila;
+wire [0:0]  wr_pack_tlast_ila;
+wire [0:0]  wr_tail_tlast_ila;
+wire [0:0]  rd_pack_tlast_ila;
+wire [0:0]  output_done_ila;
+wire [0:0]  rd_data_tlast_ila;
+assign output_tready_ila[0] = output_tready_in;
+assign output_tvalid_ila[0] = output_tvalid;
+assign output_tlast_ila[0] = output_tlast;
+assign output_tfirst_ila[0] = output_tfirst;
+assign wr_pack_tlast_ila[0] = wr_pack_tlast;
+assign wr_tail_tlast_ila[0] = wr_tail_tlast;
+assign rd_pack_tlast_ila[0] = rd_pack_tlast;
+assign output_done_ila[0] = output_done;
+assign rd_data_tlast_ila[0] = rd_data_tlast;
+ila_input_reader ila_input_reader_i (
+    .clk(clk), // input wire clk
+    .probe0(output_tready_ila), // input wire [0:0]  probe0
+    .probe1(output_tvalid_ila), // input wire [0:0]  probe1
+    .probe2(output_tlast_ila), // input wire [0:0]  probe2
+    .probe3(output_tfirst_ila), // input wire [0:0]  probe3
+    .probe4(output_data_len), // input wire [7:0]  probe4
+    .probe5(output_tkeep), // input wire [7:0]  probe5
+    .probe6(output_tdata), // input wire [63:0]  probe6
+
+    .probe7(wr_pack_tlast_ila),
+    .probe8(wr_tail_tlast_ila),
+    .probe9(rd_pack_tlast_ila),
+    .probe10(output_done_ila),
+    .probe11(rd_data_tlast_ila),
+    .probe12(counter[4:0]),
+    .probe13(tmp),
+    .probe14(current_pack_length),
+    .probe15(pack_trans_count),
+    .probe16(data_len_in)
+);
 
 
 endmodule

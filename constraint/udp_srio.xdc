@@ -1,37 +1,37 @@
 
 #------------------------ SRIO BEGIN--------------------------------------
 
-create_clock -period 8.0 -name sys_clk [get_ports srio_refclkp]
-set_case_analysis 0 [list [get_pins -hierarchical *mode_1x]]
-set_false_path -to [get_cells -hierarchical -filter {name =~ *gt_decode_error_phy_clk_stg1_reg}]
+create_clock -period 8.000 -name sys_clk [get_ports srio_refclkp]
+set_case_analysis 0 [get_pins -hierarchical *mode_1x]
+#set_false_path -to [get_cells -hierarchical -filter {name =~ *gt_decode_error_phy_clk_stg1_reg}]
 
 set_false_path -to [get_cells -hierarchical -filter {NAME =~ *data_sync_reg1}]
-set_false_path -to [get_cells -hierarchical -filter {NAME =~ *ack_sync_reg1}]
+#set_false_path -to [get_cells -hierarchical -filter {NAME =~ *ack_sync_reg1}]
 
 ## Reference clock
-set_property LOC A10  [get_ports srio_refclkp]
-set_property LOC A9  [get_ports srio_refclkn]
+set_property PACKAGE_PIN A9 [get_ports srio_refclkn]
+set_property PACKAGE_PIN A10 [get_ports srio_refclkp]
 
 # MGT119
-set_property PACKAGE_PIN E2 [get_ports srio_txp0]
-set_property PACKAGE_PIN E1 [get_ports srio_txn0]
-set_property PACKAGE_PIN D8 [get_ports srio_rxp0]
 set_property PACKAGE_PIN D7 [get_ports srio_rxn0]
+set_property PACKAGE_PIN D8 [get_ports srio_rxp0]
+set_property PACKAGE_PIN E1 [get_ports srio_txn0]
+set_property PACKAGE_PIN E2 [get_ports srio_txp0]
 
-set_property PACKAGE_PIN D4 [get_ports srio_txp1]
-set_property PACKAGE_PIN D3 [get_ports srio_txn1]
-set_property PACKAGE_PIN C6 [get_ports srio_rxp1]
 set_property PACKAGE_PIN C5 [get_ports srio_rxn1]
+set_property PACKAGE_PIN C6 [get_ports srio_rxp1]
+set_property PACKAGE_PIN D3 [get_ports srio_txn1]
+set_property PACKAGE_PIN D4 [get_ports srio_txp1]
 
-set_property PACKAGE_PIN C2 [get_ports srio_txp2]
-set_property PACKAGE_PIN C1 [get_ports srio_txn2]
-set_property PACKAGE_PIN B8 [get_ports srio_rxp2]
 set_property PACKAGE_PIN B7 [get_ports srio_rxn2]
+set_property PACKAGE_PIN B8 [get_ports srio_rxp2]
+set_property PACKAGE_PIN C1 [get_ports srio_txn2]
+set_property PACKAGE_PIN C2 [get_ports srio_txp2]
 
-set_property PACKAGE_PIN B4 [get_ports srio_txp3]
-set_property PACKAGE_PIN B3 [get_ports srio_txn3]
-set_property PACKAGE_PIN A6 [get_ports srio_rxp3]
 set_property PACKAGE_PIN A5 [get_ports srio_rxn3]
+set_property PACKAGE_PIN A6 [get_ports srio_rxp3]
+set_property PACKAGE_PIN B3 [get_ports srio_txn3]
+set_property PACKAGE_PIN B4 [get_ports srio_txp3]
 
 ##GPIO_LED0
 
@@ -58,7 +58,7 @@ create_clock -period 5.000 [get_ports clk_in_n]
 
 #125M input clock
 set_property PACKAGE_PIN AH7 [get_ports gtrefclk_n]
-create_clock -period 8.000 -name gtrefclk [get_pins "*/core_support_i/core_clocking_i/ibufds_gtrefclk/O"]
+create_clock -period 8.000 -name gtrefclk [get_pins */core_support_i/core_clocking_i/ibufds_gtrefclk/O]
 
 #create_generated_clock -name clkudp_31_25M -source [get_ports gtrefclk_n] [get_pins "*/core_support_i/core_clocking_i/mmcm_adv_inst/CLKOUT2"]
 #create_generated_clock -name clk_62_5M -source [get_ports gtrefclk_n] [get_pins "*/core_support_i/core_clocking_i/mmcm_adv_inst/CLKOUT1"]
@@ -136,7 +136,7 @@ set_property IOSTANDARD LVCMOS18 [get_ports linkup]
 # Ethernet      Constraints                              #
 ############################################################
 # Transmitter clock period constraints: please do not relax
-create_clock -name ethernet_refclk -period 8.000 [get_ports gtrefclk_n]
+create_clock -period 8.000 -name ethernet_refclk [get_ports gtrefclk_n]
 
 
 
@@ -150,8 +150,8 @@ create_clock -name ethernet_refclk -period 8.000 [get_ports gtrefclk_n]
 set_false_path -from [get_ports config_board]
 set_false_path -from [get_ports pause_req_s]
 set_false_path -from [get_ports reset_error]
-set_false_path -from [get_ports mac_speed[0]]
-set_false_path -from [get_ports mac_speed[1]]
+set_false_path -from [get_ports {mac_speed[0]}]
+set_false_path -from [get_ports {mac_speed[1]}]
 set_false_path -from [get_ports gen_tx_data]
 set_false_path -from [get_ports chk_tx_data]
 
@@ -187,16 +187,22 @@ set_false_path -to [get_ports rx_statistics_s]
 ############################################################
 
 # control signal is synched separately so this is a false path
-set_max_delay -from [get_cells -hier -filter {name =~ *rx_fifo_i/rd_addr_reg[*]}] -to [get_cells -hier -filter {name =~ *fifo*wr_rd_addr_reg[*]}] 6 -datapath_only
-set_max_delay -from [get_cells -hier -filter {name =~ *rx_fifo_i/wr_store_frame_tog_reg}] -to [get_cells -hier -filter {name =~ *fifo_i/resync_wr_store_frame_tog/data_sync_reg0}] 6 -datapath_only
-set_max_delay -from [get_cells -hier -filter {name =~ *rx_fifo_i/update_addr_tog_reg}] -to [get_cells -hier -filter {name =~ *rx_fifo_i/sync_rd_addr_tog/data_sync_reg0}] 6 -datapath_only
-set_max_delay -from [get_cells -hier -filter {name =~ *tx_fifo_i/rd_addr_txfer_reg[*]}] -to [get_cells -hier -filter {name =~ *fifo*wr_rd_addr_reg[*]}] 6 -datapath_only
-set_max_delay -from [get_cells -hier -filter {name =~ *tx_fifo_i/wr_frame_in_fifo_reg}] -to [get_cells -hier -filter {name =~ *tx_fifo_i/resync_wr_frame_in_fifo/data_sync_reg0}] 6 -datapath_only
-set_max_delay -from [get_cells -hier -filter {name =~ *tx_fifo_i/wr_frames_in_fifo_reg}] -to [get_cells -hier -filter {name =~ *tx_fifo_i/resync_wr_frames_in_fifo/data_sync_reg0}] 6 -datapath_only
-set_max_delay -from [get_cells -hier -filter {name =~ *tx_fifo_i/frame_in_fifo_valid_tog_reg}] -to [get_cells -hier -filter {name =~ *tx_fifo_i/resync_fif_valid_tog/data_sync_reg0}] 6 -datapath_only
-set_max_delay -from [get_cells -hier -filter {name =~ *tx_fifo_i/rd_txfer_tog_reg}] -to [get_cells -hier -filter {name =~ *tx_fifo_i/resync_rd_txfer_tog/data_sync_reg0}] 6 -datapath_only
-set_max_delay -from [get_cells -hier -filter {name =~ *tx_fifo_i/rd_tran_frame_tog_reg}] -to [get_cells -hier -filter {name =~ *tx_fifo_i/resync_rd_tran_frame_tog/data_sync_reg0}] 6 -datapath_only
+set_max_delay -datapath_only -from [get_cells -hier -filter {name =~ *rx_fifo_i/rd_addr_reg[*]}] -to [get_cells -hier -filter {name =~ *fifo*wr_rd_addr_reg[*]}] 6.000
+set_max_delay -datapath_only -from [get_cells -hier -filter {name =~ *rx_fifo_i/wr_store_frame_tog_reg}] -to [get_cells -hier -filter {name =~ *fifo_i/resync_wr_store_frame_tog/data_sync_reg0}] 6.000
+set_max_delay -datapath_only -from [get_cells -hier -filter {name =~ *rx_fifo_i/update_addr_tog_reg}] -to [get_cells -hier -filter {name =~ *rx_fifo_i/sync_rd_addr_tog/data_sync_reg0}] 6.000
+set_max_delay -datapath_only -from [get_cells -hier -filter {name =~ *tx_fifo_i/rd_addr_txfer_reg[*]}] -to [get_cells -hier -filter {name =~ *fifo*wr_rd_addr_reg[*]}] 6.000
+set_max_delay -datapath_only -from [get_cells -hier -filter {name =~ *tx_fifo_i/wr_frame_in_fifo_reg}] -to [get_cells -hier -filter {name =~ *tx_fifo_i/resync_wr_frame_in_fifo/data_sync_reg0}] 6.000
+set_max_delay -datapath_only -from [get_cells -hier -filter {name =~ *tx_fifo_i/wr_frames_in_fifo_reg}] -to [get_cells -hier -filter {name =~ *tx_fifo_i/resync_wr_frames_in_fifo/data_sync_reg0}] 6.000
+set_max_delay -datapath_only -from [get_cells -hier -filter {name =~ *tx_fifo_i/frame_in_fifo_valid_tog_reg}] -to [get_cells -hier -filter {name =~ *tx_fifo_i/resync_fif_valid_tog/data_sync_reg0}] 6.000
+set_max_delay -datapath_only -from [get_cells -hier -filter {name =~ *tx_fifo_i/rd_txfer_tog_reg}] -to [get_cells -hier -filter {name =~ *tx_fifo_i/resync_rd_txfer_tog/data_sync_reg0}] 6.000
+set_max_delay -datapath_only -from [get_cells -hier -filter {name =~ *tx_fifo_i/rd_tran_frame_tog_reg}] -to [get_cells -hier -filter {name =~ *tx_fifo_i/resync_rd_tran_frame_tog/data_sync_reg0}] 6.000
 
 
 
 
+
+set_false_path -from [get_clocks -of_objects [get_pins tri_mode_ethernet_mac_0_example_design_i/core_support_i/core_clocking_i/mmcm_adv_inst/CLKOUT2]] -to [get_clocks -of_objects [get_pins srio_example_top_srio_gen2_0_i/*/inst/srio_clk_inst/srio_mmcm_inst/CLKOUT0]]
+set_property C_CLK_INPUT_FREQ_HZ 300000000 [get_debug_cores dbg_hub]
+set_property C_ENABLE_CLK_DIVIDER false [get_debug_cores dbg_hub]
+set_property C_USER_SCAN_CHAIN 1 [get_debug_cores dbg_hub]
+connect_debug_port dbg_hub/clk [get_nets clk_srio]

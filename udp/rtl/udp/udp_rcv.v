@@ -192,6 +192,7 @@ module cmd_parse (
 localparam IDLE_s = 3'b000;
 localparam CMD_s = 3'b001;
 localparam DATA_s = 3'b010;
+localparam CHECK_s = 3'b011;
 localparam TAIL_s = 3'b100;
 localparam FPGA_FRAME_HEADER = 16'haaaa;
 localparam FPGA_FRAME_TAIL = 24'h00ffff;
@@ -203,6 +204,7 @@ wire [23:0]         data_3bytes;
 reg [3:0]           cnt;
 reg [7:0]           cmd_data;
 reg                 cmd_valid;
+reg [7:0]           checksum;
 
 assign data_2bytes = {data_buf[0], data_in};
 assign data_3bytes = {data_buf[1], data_buf[0], data_in};
@@ -214,6 +216,7 @@ always @(posedge clk) begin
         cnt <= 'h0;
         cmd_data <= 'h0;
         cmd_valid <= 1'b0;
+        checksum <= 'h0;
     end
     else if (valid_in) begin
         data_buf[1] <= data_buf[0];
@@ -224,9 +227,11 @@ always @(posedge clk) begin
                 cnt <= 'h0;
                 if (data_2bytes == FPGA_FRAME_HEADER) begin
                     state <= CMD_s;
+                    checksum <= 'h54;
                 end
                 else begin
                     state <= IDLE_s;
+                    checksum <= 'h0;
                 end
             end
             CMD_s: begin
@@ -241,6 +246,15 @@ always @(posedge clk) begin
                 else if (data_in == 8'h0f) begin
                     state <= TAIL_s;
                     cnt <= 'h0;
+                end
+                checksum <= checksum + data_in;
+            end
+            CHECK_s: begin
+                if (checksum == data_in) begin
+                    state <= TAIL_s;
+                end
+                else begin
+                    state <= IDLE_s;
                 end
             end
             TAIL_s: begin

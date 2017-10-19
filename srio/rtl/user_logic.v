@@ -23,14 +23,14 @@ module user_logic (
 
     );
 
-localparam DATA_SIZE0 = 7;
-localparam DATA_SIZE1 = 37;
-localparam DATA_SIZE2 = 80;
-localparam DATA_SIZE3 = 255;
-localparam DATA_SIZE4 = 41;
-localparam DATA_SIZE5 = 8;
-localparam DATA_SIZE6 = 263;
-localparam DATA_SIZE7 = 1034;
+localparam DATA_SIZE0 = 32;
+localparam DATA_SIZE1 = 32;
+localparam DATA_SIZE2 = 64;
+localparam DATA_SIZE3 = 256;
+localparam DATA_SIZE4 = 256;
+localparam DATA_SIZE5 = 256;
+localparam DATA_SIZE6 = 256;
+localparam DATA_SIZE7 = 256;
 
 localparam IDLE_s = 2'd0;
 localparam GEN_DATA_s = 2'd1;
@@ -50,8 +50,8 @@ reg data_first;
 
 
 assign user_tsize_o = user_tsize-1;
-assign user_tlast_o = ((qword_cnt == (user_tsize[19:3] ) && user_tsize[2:0] == 2'd0) ||
-                        (qword_cnt == (user_tsize[19:3] +1 ) && user_tsize[2:0] != 2'd0));
+assign user_tlast_o = ((qword_cnt == (user_tsize[19:3] -1 ) && user_tsize[2:0] == 2'd0) ||
+                        (qword_cnt == (user_tsize[19:3] ) && user_tsize[2:0] != 2'd0));
 assign user_tdata_o = gen_data;
 
 always @(*) begin

@@ -188,7 +188,6 @@ always @(posedge log_clk) begin
         nwr_ready_o <= 1'b0;
         case (state)
         IDLE_s: begin
-            nwr_ready_o <= nwr_ready_o;
             if (self_check_in && link_initialized) begin
                 state <= DB_REQ_s;
             end
@@ -517,13 +516,13 @@ always @(posedge log_clk) begin
     end
     else begin
         if (~bit_reverse) begin
-            target_ed_addr <= 'h0;
+            target_ed_addr <= 34'h81000000;
             // Doorbell content is 0x0200 + n (n=0,1)
-            db_req_inform <= 16'h0200 + 16'h1;
+            db_req_inform <= 16'h0002 + 16'h1;
         end
         else begin
             target_ed_addr    <= (34'h1 << 20);
-            db_req_inform <= 16'h0200;
+            db_req_inform <= 16'h0002;
         end
     end
 end
@@ -636,6 +635,18 @@ fifo_75x512 user_data_fifo (
 );
 generate if (!SIM) begin: ila_req_gen
 
+
+/*
+    wire [0:0] user_tvalid_ila;
+    wire [0:0] user_tfirst_ila;
+    wire [0:0] user_tlast_ila;
+
+
+
+    assign user_tvalid_ila[0] = user_tvalid_in;
+    assign user_tfirst_ila[0] = user_tfirst_in;
+    assign user_tlast_ila[0] = user_tlast_in;
+*/
     assign ireq_tlast_ila[0] = ireq_tlast_o;
     assign ireq_tvalid_ila[0] = ireq_tvalid_o;
     assign ireq_tready_ila[0] = ireq_tready_in;

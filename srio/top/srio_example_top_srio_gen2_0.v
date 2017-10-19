@@ -354,10 +354,12 @@ module srio_example_top_srio_gen2_0 #(
   wire              user_ready;
   wire              user_tready;
   wire [7:0]       user_tsize;
+  wire [19:0]       user_tsize_logic;
 
   wire [63:0]       user_tdata;
   wire              user_tvalid;
   wire [7:0]        user_tkeep;
+  wire              user_tfirst;
   wire              user_tlast;
 
   reg [12:0]        initialized_cnt;
@@ -539,7 +541,7 @@ assign srio_led[1] = ~link_initialized;
 
     assign clk_srio = log_clk;
     assign reset_srio = log_rst;
-
+/*
     input_reader input_reader_i
     (
         .clk             (log_clk),
@@ -564,12 +566,32 @@ assign srio_led[1] = ~link_initialized;
         .output_done     ()
 
         );
+        */
+ user_logic user_logic_i
+  (
+    .log_clk(log_clk),
+    .log_rst(log_rst),
 
-    db_req
+    .nwr_ready_in(nwr_ready_out),
+    .nwr_busy_in(nwr_busy_out),
+    .nwr_done_in(nwr_done_out),
+
+    .user_tready_in(user_tready),
+    .user_addr_o(user_taddr),
+    .user_tsize_o(user_tsize_logic),
+    .user_tdata_o(user_tdata),
+    .user_tfirst_o (user_tfirst),
+    .user_tvalid_o(user_tvalid),
+    .user_tkeep_o(user_tkeep),
+    .user_tlast_o(user_tlast)
+
+  );
+
+db_req
     #(.SIM(SIM_1))
     db_req_i
 
-        (
+    (
         .log_clk(log_clk),
         .log_rst(log_rst),
 
@@ -577,7 +599,7 @@ assign srio_led[1] = ~link_initialized;
         .des_id(des_id),
 
         .self_check_in(db_self_check_en),
-        .nwr_req_in(nwr_req_in),
+        .nwr_req_in(nwr_req_en),
         .rapidIO_ready_o(rapidIO_ready_out),
         .link_initialized(link_initialized),
 
@@ -587,7 +609,7 @@ assign srio_led[1] = ~link_initialized;
 
         .user_tready_o(user_tready),
         .user_addr(user_taddr_in),
-        .user_tsize_in(user_tsize),
+        .user_tsize_in(user_tsize_logic[7:0]),
         .user_tdata_in(user_tdata),
         .user_tvalid_in(user_tvalid),
         .user_tfirst_in(user_tfirst),

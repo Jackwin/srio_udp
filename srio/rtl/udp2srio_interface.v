@@ -4,7 +4,7 @@ module udp2srio_interface #
     parameter DATA_WIDTH = 64,
     parameter DATA_LEN_WIDTH = 20,
     parameter RAM_ADDR_WIDTH = 10,
-    parameter DEBUG  = 1
+    parameter DEBUG  = 0
     )
     (
     input                   clk_udp,    // Clock

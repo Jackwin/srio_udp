@@ -1,4 +1,4 @@
-`timescale 1ns/1ns
+`timescale 1ns/1ps
 module input_reader # (
     parameter DATA_WIDTH = 64,
     parameter DATA_LENGTH_WIDTH = 16,
@@ -57,7 +57,7 @@ wire full = ((wr_ptr_reg[RAM_ADDR_WIDTH] != rd_ptr_reg[RAM_ADDR_WIDTH])
 wire empty = (wr_ptr_reg == rd_ptr_reg);
 reg                             write;
 // The last written packet
-wire                            wr_tail;
+reg                            wr_tail;
 wire                            wr_tail_tlast;
 reg                             read;
 reg                             rd_data_valid;
@@ -114,8 +114,8 @@ assign data_tlast  = data_last_r[0];
 assign data_tvalid  = data_valid_r1;
 //Flag of unused data writtten to RAM
 // In WR_TAIL, fill ZEROs in data to meet the demand of ROUNDED_LENGTH
-assign wr_tail = (counter[DATA_LENGTH_WIDTH-3-1:5] == trans_256B_times_reg
-                && (counter[4:0] > tail_length_reg[7:3])) ? 1'b1 : 1'b0;
+//assign wr_tail = (counter[DATA_LENGTH_WIDTH-3-1:5] == trans_256B_times_reg
+//               && (counter[4:0] > tail_length_reg[7:3])) ? 1'b1 : 1'b0;
 
 assign wr_tail_tlast = (counter[DATA_LENGTH_WIDTH-3-1:5] == trans_256B_times_reg)
                         && wr_pack_tlast;
@@ -123,7 +123,24 @@ assign wr_tail_tlast = (counter[DATA_LENGTH_WIDTH-3-1:5] == trans_256B_times_reg
 assign wr_data = !wr_tail ? {data_in_r1, data_keep_r1, data_tlast,
                 wr_pack_tfirst, wr_pack_tlast}
                 : {64'h0, 8'h0, 1'b0, wr_tail_tlast, 1'b0, wr_tail_tlast};
-assign counter_ena = data_tvalid || wr_tail;
+assign counter_ena = (data_tvalid & (|data_keep_r1)) || wr_tail;
+
+always @ (posedge clk) begin
+    if (reset) begin
+        wr_tail <= 1'b0;
+    end
+    else begin
+        if (wr_tail_tlast) begin
+            wr_tail <= 1'b0;
+        end
+        else if (counter[DATA_LENGTH_WIDTH-3-1:5] == trans_256B_times_reg && (counter[4:0] >= (tail_length_reg[7:3] + |tail_length_reg[2:0]))) begin
+            wr_tail <= 1'b1;
+        end
+        else begin
+            wr_tail <= 1'b0;
+        end
+    end
+end
 // Data length process
 always @(posedge clk) begin
     if (reset) begin

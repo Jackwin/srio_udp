@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="input_reader_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="input_reader_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="361750000fs"></ZoomStartTime>
+      <ZoomEndTime time="981250001fs"></ZoomEndTime>
+      <Cursor1Time time="475000000fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="250"></NameColumnWidth>
+      <ValueColumnWidth column_width="121"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="4" />
+   <wvobject fp_name="group175" type="group">
+      <obj_property name="label">db_req</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="vbus917" type="vbus">
+         <obj_property name="label">data</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group209" type="group">
+      <obj_property name="label">user_logic</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject fp_name="group362" type="group">
+      <obj_property name="label">input_reader</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/clk" type="logic">
+         <obj_property name="ElementShortName">clk</obj_property>
+         <obj_property name="ObjectShortName">clk</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/reset" type="logic">
+         <obj_property name="ElementShortName">reset</obj_property>
+         <obj_property name="ObjectShortName">reset</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/data_in" type="array">
+         <obj_property name="ElementShortName">data_in[63:0]</obj_property>
+         <obj_property name="ObjectShortName">data_in[63:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/data_valid_in" type="logic">
+         <obj_property name="ElementShortName">data_valid_in</obj_property>
+         <obj_property name="ObjectShortName">data_valid_in</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/data_first_in" type="logic">
+         <obj_property name="ElementShortName">data_first_in</obj_property>
+         <obj_property name="ObjectShortName">data_first_in</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/data_keep_in" type="array">
+         <obj_property name="ElementShortName">data_keep_in[7:0]</obj_property>
+         <obj_property name="ObjectShortName">data_keep_in[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/data_len_in" type="array">
+         <obj_property name="ElementShortName">data_len_in[19:0]</obj_property>
+         <obj_property name="ObjectShortName">data_len_in[19:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/data_last_in" type="logic">
+         <obj_property name="ElementShortName">data_last_in</obj_property>
+         <obj_property name="ObjectShortName">data_last_in</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/data_ready_out" type="logic">
+         <obj_property name="ElementShortName">data_ready_out</obj_property>
+         <obj_property name="ObjectShortName">data_ready_out</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/ack_o" type="logic">
+         <obj_property name="ElementShortName">ack_o</obj_property>
+         <obj_property name="ObjectShortName">ack_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/output_tready_in" type="logic">
+         <obj_property name="ElementShortName">output_tready_in</obj_property>
+         <obj_property name="ObjectShortName">output_tready_in</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/output_tdata" type="array">
+         <obj_property name="ElementShortName">output_tdata[63:0]</obj_property>
+         <obj_property name="ObjectShortName">output_tdata[63:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/output_tvalid" type="logic">
+         <obj_property name="ElementShortName">output_tvalid</obj_property>
+         <obj_property name="ObjectShortName">output_tvalid</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/output_tfirst" type="logic">
+         <obj_property name="ElementShortName">output_tfirst</obj_property>
+         <obj_property name="ObjectShortName">output_tfirst</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/output_done" type="logic">
+         <obj_property name="ElementShortName">output_done</obj_property>
+         <obj_property name="ObjectShortName">output_done</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/output_tlast" type="logic">
+         <obj_property name="ElementShortName">output_tlast</obj_property>
+         <obj_property name="ObjectShortName">output_tlast</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/output_tkeep" type="array">
+         <obj_property name="ElementShortName">output_tkeep[7:0]</obj_property>
+         <obj_property name="ObjectShortName">output_tkeep[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/output_data_len" type="array">
+         <obj_property name="ElementShortName">output_data_len[7:0]</obj_property>
+         <obj_property name="ObjectShortName">output_data_len[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/current_pack_length" type="array">
+         <obj_property name="ElementShortName">current_pack_length[7:0]</obj_property>
+         <obj_property name="ObjectShortName">current_pack_length[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/data_len_r1" type="array">
+         <obj_property name="ElementShortName">data_len_r1[19:0]</obj_property>
+         <obj_property name="ObjectShortName">data_len_r1[19:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/data_len_r2" type="array">
+         <obj_property name="ElementShortName">data_len_r2[19:0]</obj_property>
+         <obj_property name="ObjectShortName">data_len_r2[19:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/data_len_reg" type="array">
+         <obj_property name="ElementShortName">data_len_reg[19:0]</obj_property>
+         <obj_property name="ObjectShortName">data_len_reg[19:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/data_valid_r1" type="logic">
+         <obj_property name="ElementShortName">data_valid_r1</obj_property>
+         <obj_property name="ObjectShortName">data_valid_r1</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/data_valid_r2" type="logic">
+         <obj_property name="ElementShortName">data_valid_r2</obj_property>
+         <obj_property name="ObjectShortName">data_valid_r2</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/data_valid_p" type="logic">
+         <obj_property name="ElementShortName">data_valid_p</obj_property>
+         <obj_property name="ObjectShortName">data_valid_p</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/data_in_r1" type="array">
+         <obj_property name="ElementShortName">data_in_r1[63:0]</obj_property>
+         <obj_property name="ObjectShortName">data_in_r1[63:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/data_in_r2" type="array">
+         <obj_property name="ElementShortName">data_in_r2[63:0]</obj_property>
+         <obj_property name="ObjectShortName">data_in_r2[63:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/data_last_r" type="array">
+         <obj_property name="ElementShortName">data_last_r[1:0]</obj_property>
+         <obj_property name="ObjectShortName">data_last_r[1:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/data_tlast" type="logic">
+         <obj_property name="ElementShortName">data_tlast</obj_property>
+         <obj_property name="ObjectShortName">data_tlast</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/data_tvalid" type="logic">
+         <obj_property name="ElementShortName">data_tvalid</obj_property>
+         <obj_property name="ObjectShortName">data_tvalid</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/data_keep_r1" type="array">
+         <obj_property name="ElementShortName">data_keep_r1[7:0]</obj_property>
+         <obj_property name="ObjectShortName">data_keep_r1[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/data_keep_r2" type="array">
+         <obj_property name="ElementShortName">data_keep_r2[7:0]</obj_property>
+         <obj_property name="ObjectShortName">data_keep_r2[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/pack_trans_count" type="array">
+         <obj_property name="ElementShortName">pack_trans_count[5:0]</obj_property>
+         <obj_property name="ObjectShortName">pack_trans_count[5:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/rd_data_reg" type="array">
+         <obj_property name="ElementShortName">rd_data_reg[74:0]</obj_property>
+         <obj_property name="ObjectShortName">rd_data_reg[74:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/rd_data" type="array">
+         <obj_property name="ElementShortName">rd_data[74:0]</obj_property>
+         <obj_property name="ObjectShortName">rd_data[74:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/wr_data" type="array">
+         <obj_property name="ElementShortName">wr_data[74:0]</obj_property>
+         <obj_property name="ObjectShortName">wr_data[74:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/wr_ptr_reg" type="array">
+         <obj_property name="ElementShortName">wr_ptr_reg[10:0]</obj_property>
+         <obj_property name="ObjectShortName">wr_ptr_reg[10:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/wr_ptr_next" type="array">
+         <obj_property name="ElementShortName">wr_ptr_next[10:0]</obj_property>
+         <obj_property name="ObjectShortName">wr_ptr_next[10:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/rd_ptr_reg" type="array">
+         <obj_property name="ElementShortName">rd_ptr_reg[10:0]</obj_property>
+         <obj_property name="ObjectShortName">rd_ptr_reg[10:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/rd_ptr_next" type="array">
+         <obj_property name="ElementShortName">rd_ptr_next[10:0]</obj_property>
+         <obj_property name="ObjectShortName">rd_ptr_next[10:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/rd_data_valid_next" type="logic">
+         <obj_property name="ElementShortName">rd_data_valid_next</obj_property>
+         <obj_property name="ObjectShortName">rd_data_valid_next</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/rd_data_valid_reg" type="logic">
+         <obj_property name="ElementShortName">rd_data_valid_reg</obj_property>
+         <obj_property name="ObjectShortName">rd_data_valid_reg</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/full" type="logic">
+         <obj_property name="ElementShortName">full</obj_property>
+         <obj_property name="ObjectShortName">full</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/empty" type="logic">
+         <obj_property name="ElementShortName">empty</obj_property>
+         <obj_property name="ObjectShortName">empty</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/write" type="logic">
+         <obj_property name="ElementShortName">write</obj_property>
+         <obj_property name="ObjectShortName">write</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/wr_tail" type="logic">
+         <obj_property name="ElementShortName">wr_tail</obj_property>
+         <obj_property name="ObjectShortName">wr_tail</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/wr_tail_tlast" type="logic">
+         <obj_property name="ElementShortName">wr_tail_tlast</obj_property>
+         <obj_property name="ObjectShortName">wr_tail_tlast</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/read" type="logic">
+         <obj_property name="ElementShortName">read</obj_property>
+         <obj_property name="ObjectShortName">read</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/rd_data_valid" type="logic">
+         <obj_property name="ElementShortName">rd_data_valid</obj_property>
+         <obj_property name="ObjectShortName">rd_data_valid</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/counter" type="array">
+         <obj_property name="ElementShortName">counter[16:0]</obj_property>
+         <obj_property name="ObjectShortName">counter[16:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="vbus1446" type="vbus">
+         <obj_property name="label">counter_low5</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject fp_name="vbus1440" type="vbus">
+            <wvobject fp_name="/input_reader_tb/input_reader_i/counter[4]" type="logic">
+               <obj_property name="ElementShortName">[4]</obj_property>
+               <obj_property name="ObjectShortName">[4]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/input_reader_tb/input_reader_i/counter[3]" type="logic">
+               <obj_property name="ElementShortName">[3]</obj_property>
+               <obj_property name="ObjectShortName">[3]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/input_reader_tb/input_reader_i/counter[2]" type="logic">
+               <obj_property name="ElementShortName">[2]</obj_property>
+               <obj_property name="ObjectShortName">[2]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/input_reader_tb/input_reader_i/counter[1]" type="logic">
+               <obj_property name="ElementShortName">[1]</obj_property>
+               <obj_property name="ObjectShortName">[1]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/input_reader_tb/input_reader_i/counter[0]" type="logic">
+               <obj_property name="ElementShortName">[0]</obj_property>
+               <obj_property name="ObjectShortName">[0]</obj_property>
+            </wvobject>
+         </wvobject>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/tmp" type="array">
+         <obj_property name="ElementShortName">tmp[4:0]</obj_property>
+         <obj_property name="ObjectShortName">tmp[4:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/counter_ena" type="logic">
+         <obj_property name="ElementShortName">counter_ena</obj_property>
+         <obj_property name="ObjectShortName">counter_ena</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/counter_reset" type="logic">
+         <obj_property name="ElementShortName">counter_reset</obj_property>
+         <obj_property name="ObjectShortName">counter_reset</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/wr_pack_tfirst" type="logic">
+         <obj_property name="ElementShortName">wr_pack_tfirst</obj_property>
+         <obj_property name="ObjectShortName">wr_pack_tfirst</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/wr_pack_tlast" type="logic">
+         <obj_property name="ElementShortName">wr_pack_tlast</obj_property>
+         <obj_property name="ObjectShortName">wr_pack_tlast</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/rd_data_tfirst" type="logic">
+         <obj_property name="ElementShortName">rd_data_tfirst</obj_property>
+         <obj_property name="ObjectShortName">rd_data_tfirst</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/rd_data_tlast" type="logic">
+         <obj_property name="ElementShortName">rd_data_tlast</obj_property>
+         <obj_property name="ObjectShortName">rd_data_tlast</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/rd_pack_tfirst" type="logic">
+         <obj_property name="ElementShortName">rd_pack_tfirst</obj_property>
+         <obj_property name="ObjectShortName">rd_pack_tfirst</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/rd_pack_tlast" type="logic">
+         <obj_property name="ElementShortName">rd_pack_tlast</obj_property>
+         <obj_property name="ObjectShortName">rd_pack_tlast</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/rd_pack_valid" type="logic">
+         <obj_property name="ElementShortName">rd_pack_valid</obj_property>
+         <obj_property name="ObjectShortName">rd_pack_valid</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/rd_pack_tkeep" type="array">
+         <obj_property name="ElementShortName">rd_pack_tkeep[7:0]</obj_property>
+         <obj_property name="ObjectShortName">rd_pack_tkeep[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/trans_256B_times_reg" type="array">
+         <obj_property name="ElementShortName">trans_256B_times_reg[11:0]</obj_property>
+         <obj_property name="ObjectShortName">trans_256B_times_reg[11:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/trans_256B_times" type="array">
+         <obj_property name="ElementShortName">trans_256B_times[11:0]</obj_property>
+         <obj_property name="ObjectShortName">trans_256B_times[11:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/pad_length_reg" type="array">
+         <obj_property name="ElementShortName">pad_length_reg[3:0]</obj_property>
+         <obj_property name="ObjectShortName">pad_length_reg[3:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/pad_length" type="array">
+         <obj_property name="ElementShortName">pad_length[3:0]</obj_property>
+         <obj_property name="ObjectShortName">pad_length[3:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/rounded_length_reg" type="array">
+         <obj_property name="ElementShortName">rounded_length_reg[7:0]</obj_property>
+         <obj_property name="ObjectShortName">rounded_length_reg[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/rounded_length" type="array">
+         <obj_property name="ElementShortName">rounded_length[7:0]</obj_property>
+         <obj_property name="ObjectShortName">rounded_length[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/tail_length" type="array">
+         <obj_property name="ElementShortName">tail_length[7:0]</obj_property>
+         <obj_property name="ObjectShortName">tail_length[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/tail_length_reg" type="array">
+         <obj_property name="ElementShortName">tail_length_reg[7:0]</obj_property>
+         <obj_property name="ObjectShortName">tail_length_reg[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="vbus1466" type="vbus">
+         <obj_property name="label">tail_len_5</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject fp_name="/input_reader_tb/input_reader_i/tail_length_reg[7]" type="logic">
+            <obj_property name="ElementShortName">[7]</obj_property>
+            <obj_property name="ObjectShortName">[7]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/input_reader_tb/input_reader_i/tail_length_reg[6]" type="logic">
+            <obj_property name="ElementShortName">[6]</obj_property>
+            <obj_property name="ObjectShortName">[6]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/input_reader_tb/input_reader_i/tail_length_reg[5]" type="logic">
+            <obj_property name="ElementShortName">[5]</obj_property>
+            <obj_property name="ObjectShortName">[5]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/input_reader_tb/input_reader_i/tail_length_reg[4]" type="logic">
+            <obj_property name="ElementShortName">[4]</obj_property>
+            <obj_property name="ObjectShortName">[4]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/input_reader_tb/input_reader_i/tail_length_reg[3]" type="logic">
+            <obj_property name="ElementShortName">[3]</obj_property>
+            <obj_property name="ObjectShortName">[3]</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/pack_cnt" type="array">
+         <obj_property name="ElementShortName">pack_cnt[11:0]</obj_property>
+         <obj_property name="ObjectShortName">pack_cnt[11:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/pack_reset" type="logic">
+         <obj_property name="ElementShortName">pack_reset</obj_property>
+         <obj_property name="ObjectShortName">pack_reset</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/output_strobe" type="logic">
+         <obj_property name="ElementShortName">output_strobe</obj_property>
+         <obj_property name="ObjectShortName">output_strobe</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/tmp" type="array">
+         <obj_property name="ElementShortName">tmp[4:0]</obj_property>
+         <obj_property name="ObjectShortName">tmp[4:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/rd_data_cnt" type="array">
+         <obj_property name="ElementShortName">rd_data_cnt[7:0]</obj_property>
+         <obj_property name="ObjectShortName">rd_data_cnt[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/output_tready_ila" type="array">
+         <obj_property name="ElementShortName">output_tready_ila[0:0]</obj_property>
+         <obj_property name="ObjectShortName">output_tready_ila[0:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/output_tvalid_ila" type="array">
+         <obj_property name="ElementShortName">output_tvalid_ila[0:0]</obj_property>
+         <obj_property name="ObjectShortName">output_tvalid_ila[0:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/output_tlast_ila" type="array">
+         <obj_property name="ElementShortName">output_tlast_ila[0:0]</obj_property>
+         <obj_property name="ObjectShortName">output_tlast_ila[0:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/output_tfirst_ila" type="array">
+         <obj_property name="ElementShortName">output_tfirst_ila[0:0]</obj_property>
+         <obj_property name="ObjectShortName">output_tfirst_ila[0:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/wr_pack_tlast_ila" type="array">
+         <obj_property name="ElementShortName">wr_pack_tlast_ila[0:0]</obj_property>
+         <obj_property name="ObjectShortName">wr_pack_tlast_ila[0:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/wr_tail_tlast_ila" type="array">
+         <obj_property name="ElementShortName">wr_tail_tlast_ila[0:0]</obj_property>
+         <obj_property name="ObjectShortName">wr_tail_tlast_ila[0:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/rd_pack_tlast_ila" type="array">
+         <obj_property name="ElementShortName">rd_pack_tlast_ila[0:0]</obj_property>
+         <obj_property name="ObjectShortName">rd_pack_tlast_ila[0:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/output_done_ila" type="array">
+         <obj_property name="ElementShortName">output_done_ila[0:0]</obj_property>
+         <obj_property name="ObjectShortName">output_done_ila[0:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/rd_data_tlast_ila" type="array">
+         <obj_property name="ElementShortName">rd_data_tlast_ila[0:0]</obj_property>
+         <obj_property name="ObjectShortName">rd_data_tlast_ila[0:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/DATA_WIDTH" type="array">
+         <obj_property name="ElementShortName">DATA_WIDTH[31:0]</obj_property>
+         <obj_property name="ObjectShortName">DATA_WIDTH[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/DATA_LENGTH_WIDTH" type="array">
+         <obj_property name="ElementShortName">DATA_LENGTH_WIDTH[31:0]</obj_property>
+         <obj_property name="ObjectShortName">DATA_LENGTH_WIDTH[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/RAM_ADDR_WIDTH" type="array">
+         <obj_property name="ElementShortName">RAM_ADDR_WIDTH[31:0]</obj_property>
+         <obj_property name="ObjectShortName">RAM_ADDR_WIDTH[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/input_reader_i/MEM_DPTH" type="array">
+         <obj_property name="ElementShortName">MEM_DPTH[31:0]</obj_property>
+         <obj_property name="ObjectShortName">MEM_DPTH[31:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group387" type="group">
+      <obj_property name="label">input_reader_tb</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/input_reader_tb/log_clk" type="logic">
+         <obj_property name="ElementShortName">log_clk</obj_property>
+         <obj_property name="ObjectShortName">log_clk</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/log_rst" type="logic">
+         <obj_property name="ElementShortName">log_rst</obj_property>
+         <obj_property name="ObjectShortName">log_rst</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/data_gen" type="array">
+         <obj_property name="ElementShortName">data_gen[63:0]</obj_property>
+         <obj_property name="ObjectShortName">data_gen[63:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/data_gen_valid" type="logic">
+         <obj_property name="ElementShortName">data_gen_valid</obj_property>
+         <obj_property name="ObjectShortName">data_gen_valid</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/data_gen_tfirst" type="logic">
+         <obj_property name="ElementShortName">data_gen_tfirst</obj_property>
+         <obj_property name="ObjectShortName">data_gen_tfirst</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/data_gen_tkeep" type="array">
+         <obj_property name="ElementShortName">data_gen_tkeep[7:0]</obj_property>
+         <obj_property name="ObjectShortName">data_gen_tkeep[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/data_gen_len" type="array">
+         <obj_property name="ElementShortName">data_gen_len[19:0]</obj_property>
+         <obj_property name="ObjectShortName">data_gen_len[19:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/data_gen_tlast" type="logic">
+         <obj_property name="ElementShortName">data_gen_tlast</obj_property>
+         <obj_property name="ObjectShortName">data_gen_tlast</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/data_ready_out" type="logic">
+         <obj_property name="ElementShortName">data_ready_out</obj_property>
+         <obj_property name="ObjectShortName">data_ready_out</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/fetch_data_in" type="logic">
+         <obj_property name="ElementShortName">fetch_data_in</obj_property>
+         <obj_property name="ObjectShortName">fetch_data_in</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/output_tready" type="logic">
+         <obj_property name="ElementShortName">output_tready</obj_property>
+         <obj_property name="ObjectShortName">output_tready</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/output_tdata" type="array">
+         <obj_property name="ElementShortName">output_tdata[63:0]</obj_property>
+         <obj_property name="ObjectShortName">output_tdata[63:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/output_tvalid" type="logic">
+         <obj_property name="ElementShortName">output_tvalid</obj_property>
+         <obj_property name="ObjectShortName">output_tvalid</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/output_tkeep" type="array">
+         <obj_property name="ElementShortName">output_tkeep[7:0]</obj_property>
+         <obj_property name="ObjectShortName">output_tkeep[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/output_tlast" type="logic">
+         <obj_property name="ElementShortName">output_tlast</obj_property>
+         <obj_property name="ObjectShortName">output_tlast</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/output_tfirst" type="logic">
+         <obj_property name="ElementShortName">output_tfirst</obj_property>
+         <obj_property name="ObjectShortName">output_tfirst</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/output_done" type="logic">
+         <obj_property name="ElementShortName">output_done</obj_property>
+         <obj_property name="ObjectShortName">output_done</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/ack" type="logic">
+         <obj_property name="ElementShortName">ack</obj_property>
+         <obj_property name="ObjectShortName">ack</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/output_data_len" type="array">
+         <obj_property name="ElementShortName">output_data_len[7:0]</obj_property>
+         <obj_property name="ObjectShortName">output_data_len[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/output_pack_tlast" type="logic">
+         <obj_property name="ElementShortName">output_pack_tlast</obj_property>
+         <obj_property name="ObjectShortName">output_pack_tlast</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/DATA_WIDTH" type="array">
+         <obj_property name="ElementShortName">DATA_WIDTH[31:0]</obj_property>
+         <obj_property name="ObjectShortName">DATA_WIDTH[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/DATA_LENGTH_WIDTH" type="array">
+         <obj_property name="ElementShortName">DATA_LENGTH_WIDTH[31:0]</obj_property>
+         <obj_property name="ObjectShortName">DATA_LENGTH_WIDTH[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/RAM_ADDR_WIDTH" type="array">
+         <obj_property name="ElementShortName">RAM_ADDR_WIDTH[31:0]</obj_property>
+         <obj_property name="ObjectShortName">RAM_ADDR_WIDTH[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/input_reader_tb/DATA_NUM" type="array">
+         <obj_property name="ElementShortName">DATA_NUM[31:0]</obj_property>
+         <obj_property name="ObjectShortName">DATA_NUM[31:0]</obj_property>
+      </wvobject>
+   </wvobject>
+</wave_config>

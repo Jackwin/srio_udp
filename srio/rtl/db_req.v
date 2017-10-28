@@ -181,17 +181,18 @@ always @(posedge log_clk) begin
     if (log_rst) begin
         state <= IDLE_s;
         nwr_ready_o <= 1'b0;
-        nwr_busy_o <= 1'b1;
+        nwr_busy_o <= 1'b0;
     end
     else begin
-        nwr_busy_o <= 1'b1;
-        nwr_ready_o <= 1'b0;
+        //nwr_busy_o <= 1'b1;
+        //nwr_ready_o <= 1'b0;
         case (state)
         IDLE_s: begin
             if (self_check_in && link_initialized) begin
                 state <= DB_REQ_s;
             end
-            else if (nwr_req_in && link_initialized) begin
+           // else if (nwr_req_in && link_initialized && nwr_ready_o) begin
+             else if (nwr_req_in && link_initialized) begin
                 state <= NWR_s;
                 nwr_ready_o <= 1'b0;
             end
@@ -214,7 +215,7 @@ always @(posedge log_clk) begin
             end
             else if (target_busy) begin
                 nwr_busy_o <= 1'b1;
-                nwr_ready_o    <= 1'b0;
+                //nwr_ready_o    <= 1'b0;
                 state <= IDLE_s;
             end
             else if (over_time) begin
@@ -228,7 +229,7 @@ always @(posedge log_clk) begin
         end
         NWR_s: begin
             if (nwr_done) begin
-                state <= INTEG_DB_REQ_s    ;
+                state <= INTEG_DB_REQ_s;
             end
             else begin
                 state <= NWR_s;
@@ -321,7 +322,7 @@ always @(*) begin
                         1'b0, 2'h1, 1'b0, current_user_data[7:0] , 2'h0, target_ed_addr}
                         : ((current_user_valid && ~current_user_first && ireq_tready_in) ? current_user_data
                         : ((!ireq_tready_in) ? ireq_tdata_o : 'h0)) ;
-            ireq_tvalid_o = current_user_valid ;
+            ireq_tvalid_o = current_user_valid & ireq_tready_in;
             ireq_tkeep_o = current_user_keep ;
             ireq_tlast_o = current_user_last;
             // In one transfer, called as packet here, the maximum length is 256 bytes.
@@ -382,6 +383,7 @@ always @(posedge log_clk) begin : proc_timer
     else if (timer_ena) begin
         if (timer_cnt == 16'hffff) begin
             over_time <= 1'b1;
+            timer_cnt <= 'h0;
         end
         else begin
             timer_cnt <= timer_cnt + 'h1;
@@ -592,7 +594,7 @@ assign fifo_din = user_tfirst_in ? {1'b1, user_tfirst_in, user_tkeep_r, user_tla
                                  : {user_tvalid_r, 1'b0, user_tkeep_r, user_tlast_r, user_tdata_r};
 assign fifo_wr_en = user_tvalid_in || user_tvalid_r;
 
-assign current_user_valid = fifo_dout[74];
+assign current_user_valid = fifo_dout[74] & fifo_rd_en_r;
 assign current_user_first = fifo_dout[73];
 assign current_user_keep = fifo_dout[72:65];
 assign current_user_last =  fifo_dout[64];
@@ -635,24 +637,27 @@ fifo_75x512 user_data_fifo (
 );
 generate if (!SIM) begin: ila_req_gen
 
-
-/*
     wire [0:0] user_tvalid_ila;
     wire [0:0] user_tfirst_ila;
     wire [0:0] user_tlast_ila;
-
-
+    wire [0:0] fifo_wr_en_ila;
+    wire [0:0] current_user_valid_ila;
+    wire [0:0] ireq_tready_in_ila;
 
     assign user_tvalid_ila[0] = user_tvalid_in;
     assign user_tfirst_ila[0] = user_tfirst_in;
     assign user_tlast_ila[0] = user_tlast_in;
-*/
+
     assign ireq_tlast_ila[0] = ireq_tlast_o;
     assign ireq_tvalid_ila[0] = ireq_tvalid_o;
     assign ireq_tready_ila[0] = ireq_tready_in;
 
     assign iresp_tlast_ila[0] = iresp_tlast_in;
     assign iresp_tvalid_ila[0] = iresp_tvalid_in;
+
+    assign fifo_wr_en_ila[0] = fifo_wr_en;
+    assign current_user_valid_ila[0] = current_user_valid;
+    assign ireq_tready_in_ila[0] = ireq_tready_in;
 
         ila_req ila_req_i (
             .clk(log_clk),
@@ -668,8 +673,22 @@ generate if (!SIM) begin: ila_req_gen
             .probe8(iresp_tkeep_in),
             .probe9(iresp_tuser_in),
             .probe10(state),
-            .probe11(ireq_tready_ila)
+            .probe11(fifo_wr_en_ila),
+            .probe12(current_user_valid_ila),
+            .probe13(fifo_din),
+            .probe14(current_user_data),
+            .probe15(ireq_tready_in_ila)
+            );
+/*
+            .probe11(ireq_tready_ila),
+            .probe12(user_tvalid_ila),
+            .probe13(user_tfirst_ila),
+            .probe14(user_tlast_ila),
+            .probe15(user_tsize_in[7:0]),
+            .probe16(user_tkeep_in),
+            .probe17(user_tdata_in)
         );
+*/
     end
     endgenerate
 

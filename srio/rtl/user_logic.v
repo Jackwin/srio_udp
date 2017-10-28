@@ -11,8 +11,6 @@ module user_logic (
 
     input wire user_tready_in,
     output wire [33:0] user_addr_o,
-
-
     output wire [19:0] user_tsize_o,
 
     output wire [63:0] user_tdata_o,
@@ -23,9 +21,9 @@ module user_logic (
 
     );
 
-localparam DATA_SIZE0 = 32;
-localparam DATA_SIZE1 = 32;
-localparam DATA_SIZE2 = 64;
+localparam DATA_SIZE0 = 256;
+localparam DATA_SIZE1 = 256;
+localparam DATA_SIZE2 = 256;
 localparam DATA_SIZE3 = 256;
 localparam DATA_SIZE4 = 256;
 localparam DATA_SIZE5 = 256;
@@ -47,11 +45,13 @@ reg [11:0] byte_cnt;
 // Count the sent data in the unit of qword
 reg [16:0] qword_cnt;
 reg data_first;
+reg data_gen_ena;
+reg nwr_ready_r;
 
 
 assign user_tsize_o = user_tsize-1;
-assign user_tlast_o = ((qword_cnt == (user_tsize[19:3] -1 ) && user_tsize[2:0] == 2'd0) ||
-                        (qword_cnt == (user_tsize[19:3] ) && user_tsize[2:0] != 2'd0));
+assign user_tlast_o = ((qword_cnt == (user_tsize[19:3] ) && user_tsize[2:0] == 2'd0) ||
+                        (qword_cnt == (user_tsize[19:3] + 1 ) && user_tsize[2:0] != 2'd0));
 assign user_tdata_o = gen_data;
 
 always @(*) begin
@@ -87,6 +87,17 @@ always @(*) begin
     endcase // data_sel
 end
 
+always @(posedge log_clk or posedge log_rst) begin
+    if (log_rst) begin
+        nwr_ready_r <= 1'b0;
+        data_gen_ena <= 1'b0;
+    end
+    else begin
+        nwr_ready_r <= nwr_ready_in;
+        data_gen_ena <= ~nwr_ready_r & nwr_ready_in;
+    end
+end
+
 always @(posedge log_clk or posedge    log_rst) begin
     if (log_rst) begin
         state <= IDLE_s;
@@ -99,10 +110,10 @@ always @(posedge log_clk or posedge    log_rst) begin
         user_tvalid_o <= 1'b0;
         case(state)
             IDLE_s: begin
-                gen_data <= 'h0;
+                gen_data <= 64'hbc00000000000000;
                 qword_cnt <= 'h0;
                 byte_cnt <= 'h0;
-                if (nwr_ready_in && user_tready_in) begin
+                if (data_gen_ena && user_tready_in) begin
                     state <= GEN_DATA_s;
                 end
                 else begin

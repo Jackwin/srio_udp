@@ -9,12 +9,12 @@ reg             enable_pat_gen;
 reg             clk_8, clk_srio;
 reg [1:0]       op;
 reg [7:0]       tcp_ctrl_type;
-reg [31:0]      dest_ip_addr = 32'hddccbbaa;
+reg [31:0]      dest_ip_addr = 32'hc0a80006;
 reg [15:0]      dest_port = 32'd1024;
-reg [31:0]      remote_ip_addr = 32'hddccbbaa;
+reg [31:0]      remote_ip_addr = 32'hc0a80006;
 reg [47:0]      remote_mac_addr = 48'hdd0504030201;
 
-wire [31:0]     local_ip_addr = 32'h60a80006;
+wire [31:0]     local_ip_addr = 32'hc0a80006;
 wire [47:0]     local_mac_addr = 48'hdd0504030201;
 reg             arp_reply;
 
@@ -155,8 +155,8 @@ end
 */
 ip_packet_gen ip_packet_gen_module
 (
-    .local_IP_in       (local_IP),
-    .local_MAC_in      (local_MAC),
+    .local_IP_in       (local_ip_addr),
+    .local_MAC_in      (local_mac_addr),
     // IP signals
     .clk_32(clk_32),
     .reset_32(reset_32),
@@ -172,9 +172,8 @@ ip_packet_gen ip_packet_gen_module
     .arp_reply_in(arp_reply || arp_reply_out),
     .arp_reply_ack_out (arp_reply_ack),
 
-    .aclk(aclk),
-    .areset(areset),
     .clk_8(clk_8),
+    .reset_8(areset),
     .axis_tdata_out(tdata),
     .axis_tvalid_out(tvalid),
     .axis_tlast_out(tlast),
@@ -281,7 +280,7 @@ db_req_i
     .nwr_req_in(nwr_req_in),
     .nwr_ready_o(nwr_ready_out),
     .nwr_busy_o(nwr_busy_out),
-    .nwr_done_ack_o(nwr_done_out),
+    .nwr_ack_done_o(nwr_done_out),
 
     .user_tready_o(user_tready),
     .user_addr(user_addr),

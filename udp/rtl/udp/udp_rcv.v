@@ -180,20 +180,37 @@ module cmd_parse (
     input [7:0]     data_in,
     input           valid_in,
     input           last_in,
-/*
+    //FPGA command
     output          fpga_self_check_out,
     output          srio_self_check_out,
-    output          loopback_self_check_out,
-    output          lvds_ctrl_out,*/
-    output [7:0]    cmd_out,
-    output          cmd_valid_out
+    output          loopback422_self_check_out,
+    output          lvds_ctrl_out,
+    output          image_lvds_out,
+    output          ctrl_lvds_config_out,
+    output          image_lvds_config_out,
+    output          com_422_test_out,
+    output          srio_file_load_out,
+    output          ctrl_lvds_file_out,
+    output          srio_test_out,
+    output          ctrl_lvds_test_out,
+
+    output reg [7:0]    cmd_out,
+    output reg          cmd_valid_out,
+    output reg          checkgood_out,
+    output reg          checkbad_out,
+
+    input               axis_tready_in,
+    output reg [7:0]    axis_tdata_out,
+    output reg          axis_tvalid_out,
+    output reg          axis_tlast_out
 
 );
 localparam IDLE_s = 3'b000;
 localparam CMD_s = 3'b001;
 localparam DATA_s = 3'b010;
-localparam CHECK_s = 3'b011;
-localparam TAIL_s = 3'b100;
+localparam DATA_FILE_s = 3'b011;
+localparam CHECK_s = 3'b100;
+localparam TAIL_s = 3'b101;
 localparam FPGA_FRAME_HEADER = 16'haaaa;
 localparam FPGA_FRAME_TAIL = 24'h00ffff;
 reg [2:0]           state;
@@ -205,6 +222,18 @@ reg [3:0]           cnt;
 reg [7:0]           cmd_data;
 reg                 cmd_valid;
 reg [7:0]           checksum;
+reg [10:0]          data_byte_cnt;
+reg [7:0]           total_length;
+reg [15:0]          packet_num;
+reg [10:0]          packet_length;
+
+// Data File format
+//data_file_total_length[15:0] packet_num[7:0]
+/*31--------23-------15--------7-------0
+ |  Total length      | pck_num        |
+  --------------------------------------
+  | length       |   reserved          |
+*/
 
 assign data_2bytes = {data_buf[0], data_in};
 assign data_3bytes = {data_buf[1], data_buf[0], data_in};
@@ -217,17 +246,30 @@ always @(posedge clk) begin
         cmd_data <= 'h0;
         cmd_valid <= 1'b0;
         checksum <= 'h0;
+        data_byte_cnt <= 'h0;
+        total_length <= 'h0;
+        packet_num <= 'h0;
+        packet_length <= 'h0;
+        axis_tdata_out <= 'h0;
+        axis_tvalid_out <= 1'b0;
+        axis_tlast_out <= 1'b0;
+        checkgood_out <= 1'b0;
+        checkbad_out <= 1'b0;
     end
     else if (valid_in) begin
         data_buf[1] <= data_buf[0];
         data_buf[0] <= data_in;
         cmd_valid <= 1'b0;
+        checkgood_out <= 1'b0;
+        checkbad_out <= 1'b0;
+        axis_tvalid_out <= 1'b0;
+        axis_tlast_out <= 1'b0;
         case(state)
             IDLE_s: begin
                 cnt <= 'h0;
                 if (data_2bytes == FPGA_FRAME_HEADER) begin
                     state <= CMD_s;
-                    checksum <= 'h54;
+                    checksum <= 8'haa ^ 8'haa;
                 end
                 else begin
                     state <= IDLE_s;
@@ -236,7 +278,15 @@ always @(posedge clk) begin
             end
             CMD_s: begin
                 cmd_data <= data_in;
-                state <= DATA_s;
+                if (data_in < 8'h6) begin
+                    state <= DATA_s;
+                    checksum <= checksum ^ data_in;
+                end
+                else begin
+                    checksum <= checksum ^ data_in;
+                    state <= DATA_FILE_s;
+                    cnt <= 'h0;
+                end
             end
             DATA_s: begin
                 cnt <= cnt + 1'd1;
@@ -247,14 +297,47 @@ always @(posedge clk) begin
                     state <= TAIL_s;
                     cnt <= 'h0;
                 end
-                checksum <= checksum + data_in;
+                checksum <= checksum ^ data_in;
             end
+            DATA_FILE_s: begin
+                checksum <= checksum ^ data_in;
+                data_byte_cnt <= data_byte_cnt + 'h1;
+                case(cnt)
+                    4'd0: cnt <= cnt + 1'h1;
+                    4'd1: begin
+                        cnt <= cnt + 1'h1;
+                        total_length <= data_2bytes;
+                    end
+                    4'd2: cnt <= cnt + 1'h1;
+                    4'd3: begin
+                        cnt <= cnt + 1'h1;
+                        packet_num <= data_2bytes;
+                    end
+                    4'd4: cnt <= cnt + 1'h1;
+                    4'd5: begin
+                        cnt <= cnt + 1'h1;
+                        packet_length <= data_2bytes[31:21];
+                    end
+                    4'd6: begin
+                        axis_tdata_out <= data_in;
+                        axis_tvalid_out <= 1'b1;
+                        axis_tlast_out <= 1'b0;
+                        if (data_byte_cnt == (packet_length - 1)) begin
+                            axis_tlast_out <= 1'b1;
+                            state <= CHECK_s;
+                        end
+                    end
+                endcase
+            end
+
             CHECK_s: begin
                 if (checksum == data_in) begin
                     state <= TAIL_s;
+                    checkgood_out <= 1'b1;
                 end
                 else begin
                     state <= IDLE_s;
+                    checkbad_out <= 1'b1;
                 end
             end
             TAIL_s: begin
@@ -274,23 +357,56 @@ always @(posedge clk) begin
             end
         endcase // cnt
     end
-/*
+end
+
 always @(*) begin
     fpga_self_check_out = 1'b0;
-    case (cmd_data)
-        8'h01: begin
-            if (cmd_valid) begin
-                fpga_self_check_out = 1'b1;
-            end
-            else begin
+    srio_self_check_out = 1'b0;
+    loopback422_self_check_out = 1'b0;
+    lvds_ctrl_out = 1'b0;
+    image_lvds_out = 1'b0;
+    config_422_out = 1'b0;
+    ctrl_lvds_config_out = 1'b0;
+    image_lvds_config_out = 1'b0;
+    com_422_test_out = 1'b0;
+    srio_file_load_out = 1'b0;
+    ctrl_lvds_file_out = 1'b0;
+    srio_test_out = 1'b0;
+    ctrl_lvds_test_out = 1'b0;
+    if (cmd_valid) begin
+        case (cmd_data)
+            8'h01: fpga_self_check_out = 1'b1;
+            8'h02: srio_self_check_out = 1'b1;
+            8'h03: loopback422_self_check_out = 1'b1;
+            8'h04: lvds_ctrl_out = 1'b1;
+            8'h05: image_lvds_out = 1'b1;
+            8'h06: config_422_out = 1'b1;
+            8'h07: ctrl_lvds_config_out = 1'b1;
+            8'h08: image_lvds_config_out = 1'b1;
+            8'h09: com_422_test_out = 1'b1;
+            8'h0a: srio_file_load_out = 1'b1;
+            8'h0b: ctrl_lvds_file_out = 1'b1;
+            8'hfa: srio_test_out = 1'b1;
+            8'hfb: ctrl_lvds_test_out = 1'b1;
+            default : begin
                 fpga_self_check_out = 1'b0;
+                srio_self_check_out = 1'b0;
+                loopback422_self_check_out = 1'b0;
+                lvds_ctrl_out = 1'b0;
+                image_lvds_out = 1'b0;
+                config_422_out = 1'b0;
+                ctrl_lvds_config_out = 1'b0;
+                image_lvds_config_out = 1'b0;
+                com_422_test_out = 1'b0;
+                srio_file_load_out = 1'b0;
+                ctrl_lvds_file_out = 1'b0;
+                srio_test_out = 1'b0;
+                ctrl_lvds_test_out = 1'b0;
             end
+        endcase
+    end
+end
 
-        default : ;
-    endcase
-end
-*/
-end
 
 assign cmd_out = cmd_data;
 assign cmd_valid_out = cmd_valid;

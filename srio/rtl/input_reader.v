@@ -74,7 +74,7 @@ wire [DATA_WIDTH/8-1:0]         rd_pack_tkeep;
 reg [DATA_LENGTH_WIDTH-1-8:0]   trans_256B_times_reg, trans_256B_times;
 reg [3:0]                       pad_length_reg, pad_length;
 reg [7:0]                       rounded_length_reg, rounded_length;
-reg [7:0]                       tail_length, tail_length_reg;
+reg [8:0]                       tail_length, tail_length_reg;
 reg [DATA_LENGTH_WIDTH-1-8:0]   pack_cnt;
 wire                            pack_reset;
 
@@ -133,7 +133,11 @@ always @ (posedge clk) begin
         if (wr_tail_tlast) begin
             wr_tail <= 1'b0;
         end
-        else if (counter[DATA_LENGTH_WIDTH-3-1:5] == trans_256B_times_reg && (counter[4:0] >= (tail_length_reg[7:3] + |tail_length_reg[2:0]))) begin
+        else if (counter[DATA_LENGTH_WIDTH-3-1:5] == trans_256B_times_reg && counter[4:0] > tail_length_reg[7:3] && tail_length_reg[2:0] == 3'h0) begin
+            wr_tail <= 1'b1;
+        end
+        // Consider the overflow of addition so tail_length_reg is 6-bits,but the actual bits are 5-bit
+        else if (counter[DATA_LENGTH_WIDTH-3-1:5] == trans_256B_times_reg  && (counter[5:0] > tail_length_reg[8:3] + 6'h1) && |tail_length_reg[2:0]) begin
             wr_tail <= 1'b1;
         end
         else begin
@@ -420,11 +424,11 @@ task transLengthComp;
     output [7:0] trans_256B_times; // times of 256B transaction
     output [3:0] pad_length; // the data added to round up to the closest boundary
     output [7:0] rounded_length;  // the closest supported value
-    output [7:0] tail_length;
+    output [8:0] tail_length;
     begin
         trans_256B_times = data_length_in[15:8];
         // not a whole 256-byte packet
-        tail_length = data_length_in[7:0];
+        tail_length = {1'b0, data_length_in[7:0]};
         casex(data_length_in[7:0])
             8'b00000xxx: begin
                 //pad_length = 7 - data_length_in[2:0];

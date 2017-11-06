@@ -172,32 +172,43 @@ endgenerate
 
 endmodule
 
+/*
+                     __
+cmd_valid        ___|  |_________
+                         _________________
+cmd_data/file data______|                 |_________________
+cmd_data is one clock cyle delay than cmd_valid
+*/
 
 module cmd_parse (
-    input           clk,
-    input           reset,
+    input               clk,
+    input               reset,
 
-    input [7:0]     data_in,
-    input           valid_in,
-    input           last_in,
+    input [7:0]         data_in,
+    input               valid_in,
+    input               last_in,
     //FPGA command
-    output          fpga_self_check_out,
-    output          srio_self_check_out,
-    output          loopback422_self_check_out,
-    output          lvds_ctrl_out,
-    output          image_lvds_out,
-    output          ctrl_lvds_config_out,
-    output          image_lvds_config_out,
-    output          com_422_test_out,
-    output          srio_file_load_out,
-    output          ctrl_lvds_file_out,
-    output          srio_test_out,
-    output          ctrl_lvds_test_out,
+    output              fpga_self_check_out,
+    output              srio_self_check_out,
+    output              loopback422_self_check_out,
+    output              lvds_ctrl_out,
+    output              image_lvds_out,
+    output              ctrl_lvds_config_out,
+    output              image_lvds_config_out,
+    output              com_422_test_out,
+    output              srio_file_load_out,
+    output              ctrl_lvds_file_out,
+    output              srio_test_out,
+    output              ctrl_lvds_test_out,
 
     output reg [7:0]    cmd_out,
     output reg          cmd_valid_out,
     output reg          checkgood_out,
     output reg          checkbad_out,
+
+    output     [7:0]    data_output,
+    output              data_valid_o,
+    output              data_last_o,
 
     input               axis_tready_in,
     output reg [7:0]    axis_tdata_out,
@@ -207,10 +218,11 @@ module cmd_parse (
 );
 localparam IDLE_s = 3'b000;
 localparam CMD_s = 3'b001;
-localparam DATA_s = 3'b010;
-localparam DATA_FILE_s = 3'b011;
-localparam CHECK_s = 3'b100;
-localparam TAIL_s = 3'b101;
+localparam LEN_s = 3'b010;
+localparam DATA_s = 3'b011;
+localparam DATA_FILE_s = 3'b100;
+localparam CHECK_s = 3'b101;
+localparam TAIL_s = 3'b110;
 localparam FPGA_FRAME_HEADER = 16'haaaa;
 localparam FPGA_FRAME_TAIL = 24'h00ffff;
 reg [2:0]           state;
@@ -227,6 +239,20 @@ reg [7:0]           total_length;
 reg [15:0]          packet_num;
 reg [10:0]          packet_length;
 
+// actual length minuses 1. 0 stands for 1 byte
+reg [7:0]           current_pck_length;
+reg                 data_flag; // 1 for file data, 0 for cmd data
+
+// FIFO signals
+wire                fifo_clk, fifo_rst;
+wire                fifo_wr_ena, fifo_full;
+wire                fifo_rd_ena, fifo_empty;
+wire                fifo_din_first, fifo_din_last;
+wire                fifo_dout_first, fifo_dout_last;
+reg                 fifo_dout_valid;
+wire [9:0]          fifo_din, fifo_dout;
+
+
 // Data File format
 //data_file_total_length[15:0] packet_num[7:0]
 /*31--------23-------15--------7-------0
@@ -235,6 +261,13 @@ reg [10:0]          packet_length;
   | length       |   reserved          |
 */
 
+//output
+assign data_output = fifo_dout[9:2];
+assign data_valid_o = fifo_dout_valid;
+assign data_last_o = fifo_dout_last;
+
+assign fifo_clk = clk;
+assign fifo_rst = reset;
 assign data_2bytes = {data_buf[0], data_in};
 assign data_3bytes = {data_buf[1], data_buf[0], data_in};
 
@@ -255,6 +288,9 @@ always @(posedge clk) begin
         axis_tlast_out <= 1'b0;
         checkgood_out <= 1'b0;
         checkbad_out <= 1'b0;
+        fifo_rd_ena <= 1'b0;
+        data_flag <= 1'b0;
+        current_pck_length <= 'h0;
     end
     else if (valid_in) begin
         data_buf[1] <= data_buf[0];
@@ -269,7 +305,7 @@ always @(posedge clk) begin
                 cnt <= 'h0;
                 if (data_2bytes == FPGA_FRAME_HEADER) begin
                     state <= CMD_s;
-                    checksum <= 8'haa ^ 8'haa;
+                    checksum <= 8'haa + 8'haa;
                 end
                 else begin
                     state <= IDLE_s;
@@ -279,15 +315,28 @@ always @(posedge clk) begin
             CMD_s: begin
                 cmd_data <= data_in;
                 if (data_in < 8'h6) begin
-                    state <= DATA_s;
-                    checksum <= checksum ^ data_in;
+                   // state <= DATA_s;
+                    data_flag <= 1'b0;
+                    checksum <= checksum + data_in;
                 end
                 else begin
-                    checksum <= checksum ^ data_in;
-                    state <= DATA_FILE_s;
+                    checksum <= checksum + data_in;
+                    data_flag <= 1'b1;
+                    //state <= DATA_FILE_s;
                     cnt <= 'h0;
                 end
             end
+            LEN_s: begin
+                current_pck_length <= data_in;
+                if (data_flag == 1'b0) begin
+                    state <= DATA_s;
+                end
+                else begin
+                    state <= DATA_FILE_s;
+                    data_flag <= 1'b0;
+                end
+            end
+            //Command data
             DATA_s: begin
                 cnt <= cnt + 1'd1;
                 if (data_in != {4'h0, cnt}) begin
@@ -297,10 +346,11 @@ always @(posedge clk) begin
                     state <= TAIL_s;
                     cnt <= 'h0;
                 end
-                checksum <= checksum ^ data_in;
+                checksum <= checksum + data_in;
             end
+            // Data file
             DATA_FILE_s: begin
-                checksum <= checksum ^ data_in;
+                checksum <= checksum + data_in;
                 data_byte_cnt <= data_byte_cnt + 'h1;
                 case(cnt)
                     4'd0: cnt <= cnt + 1'h1;
@@ -343,7 +393,11 @@ always @(posedge clk) begin
             TAIL_s: begin
                 if (cnt == 4'd2 && data_3bytes == FPGA_FRAME_TAIL) begin
                     cmd_valid <= 1'b1;
-                    state <= IDLE_s;
+                    fifo_rd_ena <= 1'b1;
+                    if (fifo_dout_last) begin
+                        state <= IDLE_s;
+                        fifo_rd_ena <= 1'b0;
+                    end
                 end
                 else if (cnt == 4'd3) begin
                     state <= IDLE_s;
@@ -411,4 +465,44 @@ end
 assign cmd_out = cmd_data;
 assign cmd_valid_out = cmd_valid;
 
+always @(*) begin
+    if (state == DATA_s || state == DATA_FILE_s) begin
+        fifo_wr_ena = valid_in;
+        fifo_din_first = (cnt == 'h0);
+        fifo_din_last = (cnt == 'hf);
+    end
+    else if (state == DATA_FILE_s) begin
+
+
+    else begin
+        fifo_wr_ena = 1'b0;
+        fifo_din_first = 1'b0;
+        fifo_din_last = 1'b0;
+    end
+end
+
+assign fifo_din = {data_in, fifo_din_last, fifo_din_first};
+assign fifo_dout_last = fifo_dout[1];
+
+always @(posedge clk) begin
+    if (reset) begin
+        fifo_dout_valid <= 1'b0;
+    end
+    else begin
+        fifo_dout_valid <= fifo_rd_ena;
+    end
+end
+
+
+fifo_10x512 user_data_fifo (
+  .clk(fifo_clk),                // input wire clk
+  .srst(fifo_rst),              // input wire srst
+  .din(fifo_din),                // input wire [65 : 0] din
+  .wr_en(fifo_wr_en),            // input wire wr_en
+  .rd_en(fifo_rd_en),            // input wire rd_en
+  .dout(fifo_dout),              // output wire [65 : 0] dout
+  .full(fifo_full),              // output wire full
+  .empty(fifo_empty)            // output wire empty
+  //data_count(fifo_data_cnt)  // output wire [8 : 0] data_count
+);
 endmodule
